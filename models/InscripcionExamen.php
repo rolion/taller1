@@ -12,6 +12,7 @@ use Yii;
  * @property integer $id_examen
  * @property string $fecha_inscripcion
  * @property string $fecha_aplicacion
+ * @property double $costo
  * @property integer $eliminado
  *
  * @property Examen $idExamen
@@ -22,6 +23,7 @@ class InscripcionExamen extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+
     public static function tableName()
     {
         return 'inscripcion_examen';
@@ -33,9 +35,10 @@ class InscripcionExamen extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
-            [['id', 'id_alumno', 'id_examen', 'eliminado'], 'integer'],
-            [['fecha_inscripcion', 'fecha_aplicacion'], 'safe']
+            [['id_alumno', 'id_examen', 'eliminado'], 'integer'],
+            [['fecha_inscripcion', 'fecha_aplicacion'], 'safe'],
+            [['id_examen','costo'], 'required'],
+            [['costo'], 'number']
         ];
     }
 
@@ -46,10 +49,11 @@ class InscripcionExamen extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_alumno' => 'Id Alumno',
-            'id_examen' => 'Id Examen',
+            'id_alumno' => 'Alumno',
+            'id_examen' => 'Examen',
             'fecha_inscripcion' => 'Fecha Inscripcion',
             'fecha_aplicacion' => 'Fecha Aplicacion',
+            'costo' => 'Costo',
             'eliminado' => 'Eliminado',
         ];
     }

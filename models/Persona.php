@@ -38,9 +38,9 @@ class Persona extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
+            [['nombre','apellido','ci'], 'required'],
             [['id', 'ci', 'id_tipo', 'eliminado', 'id_colegio'], 'integer'],
-            [['nombre', 'apellido'], 'string', 'max' => 255],
+            [['nombre', 'apellido','ciudad'], 'string', 'max' => 255],
             [['telefono'], 'string', 'max' => 10]
         ];
     }
@@ -55,10 +55,10 @@ class Persona extends \yii\db\ActiveRecord
             'nombre' => 'Nombre',
             'apellido' => 'Apellido',
             'telefono' => 'Telefono',
-            'ci' => 'Ci',
-            'id_tipo' => 'Id Tipo',
+            'ci' => 'C.I.',
+            'id_tipo' => 'Tipo',
             'eliminado' => 'Eliminado',
-            'id_colegio' => 'Id Colegio',
+            'id_colegio' => 'Colegio',
         ];
     }
 

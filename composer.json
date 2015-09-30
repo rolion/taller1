@@ -18,11 +18,14 @@
         "yiisoft/yii2": ">=2.0.5",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
-        "wbraganca/yii2-dynamicform": "*"
+        "wbraganca/yii2-dynamicform": "*",
+        "kartik-v/yii2-widget-select2": "*",
+        "2amigos/yii2-date-picker-widget": "*",
+        "yiisoft/yii2-debug": "^2.0",
+        "kartik-v/yii2-datecontrol": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
-        "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*"
     },

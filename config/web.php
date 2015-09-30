@@ -6,6 +6,27 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'modules' => [
+        'datecontrol' =>  [
+                'class' => '\kartik\datecontrol\Module',
+            // format settings for displaying each date attribute
+            'displaySettings' => [
+                'date' => 'd-M-Y',
+                'time' => 'H:i:s A',
+                'datetime' => 'd-m-Y H:i:s A',
+            ],
+
+            // format settings for saving each date attribute
+            'saveSettings' => [
+                'date' => 'Y-m-d', 
+                'time' => 'H:i:s A',
+                'datetime' => 'Y-m-d H:i:s A',
+            ],
+
+            // automatically use kartik\widgets for each of the above formats
+            'autoWidget' => true,
+                ]
+        ],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
