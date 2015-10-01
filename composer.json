@@ -22,7 +22,8 @@
         "kartik-v/yii2-widget-select2": "*",
         "2amigos/yii2-date-picker-widget": "*",
         "yiisoft/yii2-debug": "^2.0",
-        "kartik-v/yii2-datecontrol": "*"
+        "kartik-v/yii2-datecontrol": "dev-master",
+        "kartik-v/yii2-widget-datetimepicker": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

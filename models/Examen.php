@@ -32,9 +32,10 @@ class Examen extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre', 'autor'], 'string'],
+            [['nombre'],'required'],
+            [['nombre', 'autor'], 'string', 'max' => 255],
             [['fecha_publicacion'], 'safe'],
-            [['elimnado'], 'integer']
+            [['eliminado'], 'integer']
         ];
     }
 

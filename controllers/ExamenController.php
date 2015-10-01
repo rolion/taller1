@@ -8,12 +8,17 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use app\negocio\ExamenNegocio;
 /**
  * ExamenController implements the CRUD actions for Examen model.
  */
 class ExamenController extends Controller
 {
+    private $negocio;
+    public function init() {
+        parent::init();
+        $this->negocio=new ExamenNegocio();
+    }
     public function behaviors()
     {
         return [
@@ -33,7 +38,7 @@ class ExamenController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Examen::find(),
+            'query' => Examen::find()->where(['eliminado'=>0]),
         ]);
 
         return $this->render('index', [
@@ -62,7 +67,8 @@ class ExamenController extends Controller
     {
         $model = new Examen();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && 
+            $this->negocio->saveExamen($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -81,7 +87,8 @@ class ExamenController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && 
+                ($model=  $this->negocio->updateExamen($model))!=null) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -98,8 +105,8 @@ class ExamenController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        //$this->findModel($id)->delete();
+        $this->negocio->deleteExamen($id);
         return $this->redirect(['index']);
     }
 
