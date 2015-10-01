@@ -38,7 +38,7 @@ class BaremoController extends Controller
     {
         
         $dataProvider = new ActiveDataProvider([
-            'query' => Baremo::find(['eliminado'=>'0']),
+            'query' => Baremo::find()->where(['eliminado'=>0]),
         ]);
 
         return $this->render('index', [
@@ -68,7 +68,7 @@ class BaremoController extends Controller
         $model = new Baremo();
         $negocio=new BaremoNegocio();
         if ($model->load(Yii::$app->request->post()) 
-                && $this->negocio->saveBaremo($model)) {
+                && $negocio->saveBaremo($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -86,9 +86,9 @@ class BaremoController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $negocio=new BaremoNegocio();
         if ($model->load(Yii::$app->request->post()) 
-                && $this->negocio->saveBaremo($model)) {
+                && ($model=$negocio->updateBaremo($model))!=null) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -105,7 +105,9 @@ class BaremoController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        //$this->findModel($id)->delete();
+        $negocio=new BaremoNegocio();
+        $negocio->deleteArea($id);
 
         return $this->redirect(['index']);
     }

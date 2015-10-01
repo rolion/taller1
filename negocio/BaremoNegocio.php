@@ -20,16 +20,25 @@ class BaremoNegocio {
        
        $valid=$model->validate();
        if($valid){
+           $model->eliminado=0;
            $model->save();
            return true;
        }else
            return false;
    } 
-   public function logicalDelete($id){
-       $model;
-       if($model=Baremo::findOne($id)!=null){
-           $model->elimnado=1;
-           $model->save();
-       }
+   public function deleteArea($id){
+        $model= Baremo::findOne($id);
+        $model->eliminado=1;
+        if($model->save()){
+            return true;
+        }else
+            return false;
+   }
+   public function updateBaremo($model){
+       if($this->saveBaremo($model))
+           return $model;
+       else 
+           return null;
+       
    }
 }

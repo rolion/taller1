@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 use app\models\Area;
 /* @var $this yii\web\View */
 /* @var $model app\models\Baremo */
@@ -20,7 +21,7 @@ use app\models\Area;
 
     <?= $form->field($model, 'id_area')->dropDownList(
             ArrayHelper::map(Area::findAll(['eliminado'=>'0']),'id','nombre'), 
-    ['prompt'=>'seleccione el examen']) ?>
+    ['prompt'=>'Area']) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

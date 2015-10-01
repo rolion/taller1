@@ -30,7 +30,7 @@ class Baremo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
+            [['puntiacion_directa', 'percentil', 'id_area'], 'required'],
             [['id', 'puntiacion_directa', 'percentil', 'id_area'], 'integer']
         ];
     }
@@ -44,7 +44,7 @@ class Baremo extends \yii\db\ActiveRecord
             'id' => 'ID',
             'puntiacion_directa' => 'Puntiacion Directa',
             'percentil' => 'Percentil',
-            'id_area' => 'Id Area',
+            'id_area' => 'Area',
         ];
     }
 

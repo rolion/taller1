@@ -31,7 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'puntiacion_directa',
             'percentil',
-            'id_area',
+            ['attribute'=>'id_area',
+                'value'=>$model->idArea->nombre],
         ],
     ]) ?>
 
