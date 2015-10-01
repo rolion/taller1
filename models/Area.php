@@ -30,7 +30,7 @@ class Area extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
+            [['nombre'], 'required'],
             [['id'], 'integer'],
             [['nombre'], 'string']
         ];

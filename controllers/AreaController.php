@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\negocio\AreaNegocio;
 
 /**
  * AreaController implements the CRUD actions for Area model.
@@ -33,7 +34,7 @@ class AreaController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Area::find(),
+            'query' => Area::find()->where(['eliminado'=>0]),
         ]);
 
         return $this->render('index', [
@@ -61,8 +62,8 @@ class AreaController extends Controller
     public function actionCreate()
     {
         $model = new Area();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $negocio=new AreaNegocio();
+        if ($model->load(Yii::$app->request->post()) && $negocio->saveArea($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -79,9 +80,10 @@ class AreaController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $model=  Area::findOne($id);
+        $model->id=$id;
+        $negocio=new AreaNegocio();
+        if ($model->load(Yii::$app->request->post()) && ($negocio->updateArea($model))!=null) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -98,8 +100,9 @@ class AreaController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        //$this->findModel($id)->delete();
+        $negocio = new AreaNegocio();
+        $negocio->deleteArea($id);
         return $this->redirect(['index']);
     }
 

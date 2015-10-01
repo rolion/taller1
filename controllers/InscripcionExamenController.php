@@ -10,7 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Persona;
 use app\models\DynamicFormModel;
-use app\models\InscripcionNegocio;
+use app\negocio\InscripcionNegocio;
 
 /**
  * InscripcionExamenController implements the CRUD actions for InscripcionExamen model.

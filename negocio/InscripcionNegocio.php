@@ -11,7 +11,7 @@
  *
  * @author root
  */
-namespace app\models;
+namespace app\negocio;
 use Yii;
 use app\models\Persona;
 use app\models\InscripcionExamen;

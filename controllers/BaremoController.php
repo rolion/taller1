@@ -8,12 +8,16 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\negocio\BaremoNegocio;
 
 /**
  * BaremoController implements the CRUD actions for Baremo model.
  */
 class BaremoController extends Controller
 {
+     
+
+
     public function behaviors()
     {
         return [
@@ -32,8 +36,9 @@ class BaremoController extends Controller
      */
     public function actionIndex()
     {
+        
         $dataProvider = new ActiveDataProvider([
-            'query' => Baremo::find(),
+            'query' => Baremo::find(['eliminado'=>'0']),
         ]);
 
         return $this->render('index', [
@@ -61,8 +66,9 @@ class BaremoController extends Controller
     public function actionCreate()
     {
         $model = new Baremo();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $negocio=new BaremoNegocio();
+        if ($model->load(Yii::$app->request->post()) 
+                && $this->negocio->saveBaremo($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -81,7 +87,8 @@ class BaremoController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) 
+                && $this->negocio->saveBaremo($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
