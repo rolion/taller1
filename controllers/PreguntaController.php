@@ -12,12 +12,19 @@ use app\models\RespuestaExamen;
 use yii\web\UploadedFile;
 use app\models\DynamicFormModel;
 use yii\helpers\ArrayHelper;
+use app\negocio\PreguntaNegocio;
 
 /**
  * PreguntaController implements the CRUD actions for Pregunta model.
  */
 class PreguntaController extends Controller
 {
+    private $negocio;
+    public function init() {
+        parent::init();
+        $this->negocio=new PreguntaNegocio();
+    }
+
     public function behaviors()
     {
         return [
@@ -69,65 +76,12 @@ class PreguntaController extends Controller
     {
         $model = new Pregunta();
         $modelRespuestaExamen=[new RespuestaExamen];
-        if ($model->load(Yii::$app->request->post()) 
-                ) {
-            $model->file= UploadedFile::getInstance($model, 'file');
-            if($model->file==null)
-                $imageName='null.png';
-            else
-                $imageName=$model->file->baseName.'.'.$model->file->extension;
-                        // validate all models
-            $valid = $model->validate();
-            $valid = DynamicFormModel::validateMultiple($modelRespuestaExamen) && $valid;
-            $modelRespuestaExamen = DynamicFormModel::createMultiple(RespuestaExamen::className());
-            DynamicFormModel::loadMultiple($modelRespuestaExamen, Yii::$app->request->post());
-            // ajax validation
-            if (Yii::$app->request->isAjax) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return ArrayHelper::merge(
-                    ActiveForm::validateMultiple($modelRespuestaExamen),
-                    ActiveForm::validate($model)
-                );
-            }
 
-            if ($valid) {
-                $model->imagen='uploads/'.$imageName;
-                $flag=$model->save(false);
-                //$modelRespuestaExamen->save();
-                if($imageName!='null.png')
-                    $model->file->saveAs('uploads/'.$imageName);
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-                    if($flag){
-                        foreach ($modelRespuestaExamen as $modelRespuestaExamen) {
-                            $modelRespuestaExamen->id_pregunta = $model->id;
-                            //cargamos la imagen subida
-                            $modelRespuestaExamen->file= UploadedFile::getInstance($modelRespuestaExamen, 'file');
-                            //verificamos si es nula
-                            if($modelRespuestaExamen->file==null)
-                                $imageName='null.png';
-                            else
-                                $imageName=$model->file->baseName.'.'.$model->file->extension;
-                            //cargamos la direccion de la imagen
-                            $modelRespuestaExamen->imagen='uploads/'.$imageName;
-                            if (! ($flag = $modelRespuestaExamen->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                        //guardamos la imagen
-                         if($imageName!='null.png')
-                         $model->file->saveAs('uploads/'.$imageName);
-                         $transaction->commit();
-                         $dataProvider=new ActiveDataProvider([
-                            'query' => RespuestaExamen::find()->where(['id_pregunta'=>$model->id])->orderBy('id'),]);
-
-                        return $this->redirect(['view', 'id' => $model->id,'dataProvider'=>$dataProvider]);
-                    }
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            }
+        if ($model->load(Yii::$app->request->post()) &&
+        $this->negocio->savePregunta($model, $modelRespuestaExamen) ) {
+            $dataProvider=new ActiveDataProvider([
+                        'query' => RespuestaExamen::find()->where(['id_pregunta'=>$model->id])->orderBy('id'),]);
+          return $this->redirect(['view', 'id' => $model->id,'dataProvider'=>$dataProvider]);
         } else {
             return $this->render('create', [
                 'model' => $model,

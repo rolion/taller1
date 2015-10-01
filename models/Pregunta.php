@@ -34,6 +34,7 @@ class Pregunta extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['id_area','descripcion_pregunta','id_examen'],'required'],
             [['descripcion_pregunta', 'imagen'], 'string'],
             ['file','file','extensions'=>'jpg, png'],
             [['id_examen', 'id_area'], 'integer']

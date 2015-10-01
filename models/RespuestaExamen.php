@@ -34,6 +34,7 @@ class RespuestaExamen extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['descripcion_respuesta','puntos_otorgados','nombre_opcion'],'required'],
             [['descripcion_respuesta', 'imagen'], 'string'],
             [['id_pregunta', 'puntos_otorgados'], 'integer'],
             ['file','file','extensions'=>'jpg, png'],
