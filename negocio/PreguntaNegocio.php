@@ -12,6 +12,7 @@ use app\models\RespuestaExamen;
 use yii\web\UploadedFile;
 use app\models\DynamicFormModel;
 use yii\helpers\ArrayHelper;
+use app\models\Pregunta;
 /**
  * Description of PreguntaNegocio
  *
@@ -129,6 +130,11 @@ class PreguntaNegocio {
             return false;
         }
             
+    }
+    public function deletePregunta($id){
+        $model=  Pregunta::findOne($id);
+        $model->eliminado=1;
+        $model->save();
     }
   }
         

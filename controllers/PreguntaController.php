@@ -44,7 +44,7 @@ class PreguntaController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Pregunta::find(),
+            'query' => Pregunta::find()->where(['eliminado'=>0]),
         ]);
 
         return $this->render('index', [
@@ -120,8 +120,8 @@ class PreguntaController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        //$this->findModel($id)->delete();
+        $this->negocio->deletePregunta($id);
         return $this->redirect(['index']);
     }
 
