@@ -42,7 +42,7 @@ class PreguntaNegocio {
                         //verificamos si es nula
                         $this->getImageRespuesta($modelRespuestaExamen);
                         //cargamos la direccion de la imagen
-                        $modelRespuestaExamen->imagen='uploads/'.$imageName;
+                        //$modelRespuestaExamen->imagen='uploads/'.$imageName;
                         $modelRespuestaExamen->eliminado=0;
                         if (!($modelRespuestaExamen->validate() && $modelRespuestaExamen->save())) {
                             $transaction->rollBack();
