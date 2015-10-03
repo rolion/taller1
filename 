@@ -1,0 +1,41 @@
+[33mcommit a1cc19e54220331abc18ead62d85d02f01bab3dc[m
+Author: rolion <roleonm@gmail.com>
+Date:   Thu Oct 1 14:44:43 2015 -0400
+
+    negocio pregunta respuesta/create, falta hacer el update y delete
+
+[33mcommit 5edf4bcc9b671b6abf9240fd04e243c6563297cf[m
+Author: rolion <roleonm@gmail.com>
+Date:   Thu Oct 1 11:21:08 2015 -0400
+
+    negocio examen
+
+[33mcommit b9a77bcd2fb6c044e4c54008305e5efda36b7611[m
+Author: rolion <roleonm@gmail.com>
+Date:   Wed Sep 30 21:40:27 2015 -0400
+
+    negocio baremo
+
+[33mcommit 1fea66baf0b83b4dc6d05de57beddde24a0ab14d[m
+Author: rolion <roleonm@gmail.com>
+Date:   Wed Sep 30 20:31:11 2015 -0400
+
+    negocio area
+
+[33mcommit 35cadb3bdbd2c5120ffa1771ad9d39402a24a74f[m
+Author: rolion <roleonm@gmail.com>
+Date:   Wed Sep 30 18:43:20 2015 -0400
+
+    crud baremos, pregunta respuesta inscripcion
+
+[33mcommit 21ee92b0b4a30fa022dbf587a31af900359ae62c[m
+Author: rolion <roleonm@gmail.com>
+Date:   Sat Sep 26 22:24:52 2015 -0400
+
+    cambio de pwd
+
+[33mcommit 0e8bed4ec783ce5d3dd6e94f5ac39e276427ee5d[m
+Author: rolion <roleonm@gmail.com>
+Date:   Sat Sep 26 21:48:58 2015 -0400
+
+    primera version

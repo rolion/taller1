@@ -15,17 +15,18 @@ use wbraganca\dynamicform\DynamicFormWidget;
 
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form','options'=>['enctype'=>'multipart/form-data']]); ?>
 
+    <?= $form->field($model, 'nro_pregunta')->textInput() ?>
     <?= $form->field($model, 'descripcion_pregunta')->textarea(['rows' => 6]) ?>
     
 
     <?= $form->field($model, 'id_examen')->dropDownList(
-            ArrayHelper::map(Examen::find()->all(),'id','nombre'), 
+            ArrayHelper::map(Examen::find()->where(['eliminado'=>0])->all(),'id','nombre'), 
     ['prompt'=>'seleccione el examen']) ?>
 
     <?= $form->field($model, 'file')->fileInput()?>
 
     <?= $form->field($model, 'id_area')->dropDownList(
-    ArrayHelper::map(Area::find()->all(), 'id', 'nombre'),
+    ArrayHelper::map(Area::find()->where(['eliminado'=>0])->all(), 'id', 'nombre'),
             ['prompt'=>'Seleccione el area']) ?>
     
     
@@ -48,6 +49,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     'nombre_opcion',
                     'descripcion_respuesta',
                     'puntos_otorgados',
+                    'imgfile'
                 ],
             ]); ?>
 
@@ -78,7 +80,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                                 <?= $form->field($modelRespuestaExamen, "[{$i}]puntos_otorgados")->textInput(['maxlength' => true]) ?>
                             </div>
                             <div class="col-sm-6">
-                                <?=$form->field($modelRespuestaExamen, "[{$i}]file")->fileInput()?>
+                                <?=$form->field($modelRespuestaExamen, "[{$i}]imgfile")->fileInput()?>
                             </div>
                         </div><!-- .row -->
                     </div>

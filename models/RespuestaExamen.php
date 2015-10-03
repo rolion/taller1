@@ -22,7 +22,7 @@ class RespuestaExamen extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public $file;
+    public $imgfile;
     public static function tableName()
     {
         return 'respuesta_examen';
@@ -37,7 +37,7 @@ class RespuestaExamen extends \yii\db\ActiveRecord
             [['descripcion_respuesta','puntos_otorgados','nombre_opcion'],'required'],
             [['descripcion_respuesta', 'imagen'], 'string'],
             [['id_pregunta', 'puntos_otorgados'], 'integer'],
-            ['file','file','extensions'=>'jpg, png'],
+            [['imgfile'],'file','extensions'=>'jpg, png'],
             [['nombre_opcion'], 'string', 'max' => 1]
         ];
     }

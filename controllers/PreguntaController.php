@@ -99,58 +99,11 @@ class PreguntaController extends Controller
      */
     public function actionUpdate($id)
     {
-//        $model = $this->findModel($id);
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            return $this->redirect(['view', 'id' => $model->id]);
-//        } else {
-//            return $this->render('update', [
-//                'model' => $model,
-//            ]);
-//        }
         $model = $this->findModel($id);
-        $modelRespuestaExamen = $model->respuestaExamens;
-
-        if ($model->load(Yii::$app->request->post())) {
-
-            $oldIDs = ArrayHelper::map($modelRespuestaExamen, 'id', 'id');
-            $modelRespuestaExamen = DynamicFormModel::createMultiple(RespuestaExamen::classname(), $modelRespuestaExamen);
-            DynamicFormModel::loadMultiple($modelRespuestaExamen, Yii::$app->request->post());
-            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($modelRespuestaExamen, 'id', 'id')));
-            // ajax validation
-            if (Yii::$app->request->isAjax) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return ArrayHelper::merge(
-                    ActiveForm::validateMultiple($modelRespuestaExamen),
-                    ActiveForm::validate($model)
-                );
-            }
-            // validate all models
-            $valid = $model->validate();
-            $valid = DynamicFormModel::validateMultiple($modelRespuestaExamen) && $valid;
-            if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-                    if ($flag = $model->save(false)) {
-                        if (! empty($deletedIDs)) {
-                            RespuestaExamen::deleteAll(['id' => $deletedIDs]);
-                        }
-                        foreach ($modelRespuestaExamen as $modelRespuestaExamen) {
-                            $modelRespuestaExamen->id_pregunta = $model->id;
-                            if (! ($flag = $modelRespuestaExamen->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                    }
-                    if ($flag) {
-                        $transaction->commit();
-                        return $this->redirect(['view', 'id' => $model->id]);
-                    }
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            }
+        $modelRespuestaExamen=$model->respuestaExamens;
+        if ($model->load(Yii::$app->request->post()) &&
+        $this->negocio->updatePregunta($model)) {
+            return $this->redirect(['view', 'id' => $model->id]); 
         }
         return $this->render('update', [
             'model' => $model,

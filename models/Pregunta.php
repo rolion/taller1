@@ -34,10 +34,10 @@ class Pregunta extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_area','descripcion_pregunta','id_examen'],'required'],
+            [['id_area','descripcion_pregunta','id_examen','nro_pregunta'],'required'],
             [['descripcion_pregunta', 'imagen'], 'string'],
-            ['file','file','extensions'=>'jpg, png'],
-            [['id_examen', 'id_area'], 'integer']
+            [['file'],'file','extensions'=>'jpg, png'],
+            [['id_examen', 'id_area','nro_pregunta'], 'integer']
         ];
     }
 
@@ -52,6 +52,7 @@ class Pregunta extends \yii\db\ActiveRecord
             'id_examen' => 'Examen',
             'file' => 'Imagen',
             'id_area' => 'Area',
+            'nro_pregunta'=>'Nro pregunta'
         ];
     }
 
