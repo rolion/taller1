@@ -14,7 +14,13 @@ use app\negocio\AreaNegocio;
  * AreaController implements the CRUD actions for Area model.
  */
 class AreaController extends Controller
-{
+{   
+    private $negocio;
+    public function init() {
+        parent::init();
+        $this->negocio=new AreaNegocio();
+    }
+
     public function behaviors()
     {
         return [
@@ -62,8 +68,8 @@ class AreaController extends Controller
     public function actionCreate()
     {
         $model = new Area();
-        $negocio=new AreaNegocio();
-        if ($model->load(Yii::$app->request->post()) && $negocio->saveArea($model)) {
+        
+        if ($model->load(Yii::$app->request->post()) && $this->negocio->saveArea($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -82,8 +88,7 @@ class AreaController extends Controller
     {
         $model=  Area::findOne($id);
         $model->id=$id;
-        $negocio=new AreaNegocio();
-        if ($model->load(Yii::$app->request->post()) && ($negocio->updateArea($model))!=null) {
+        if ($model->load(Yii::$app->request->post()) && ($this->negocio->updateArea($model))!=null) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -100,9 +105,8 @@ class AreaController extends Controller
      */
     public function actionDelete($id)
     {
-        //$this->findModel($id)->delete();
-        $negocio = new AreaNegocio();
-        $negocio->deleteArea($id);
+
+        $this->negocio->deleteArea($id);
         return $this->redirect(['index']);
     }
 

@@ -8,12 +8,19 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\negocio\ColegioNegocio;
 
 /**
  * ColegioController implements the CRUD actions for Colegio model.
  */
 class ColegioController extends Controller
 {
+    private $negocio;
+    public function init() {
+        parent::init();
+        $this->negocio= new ColegioNegocio();
+    }
+
     public function behaviors()
     {
         return [
@@ -33,7 +40,7 @@ class ColegioController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Colegio::find(),
+            'query' => Colegio::find()->where(['eliminado'=>0]),
         ]);
 
         return $this->render('index', [
@@ -62,7 +69,7 @@ class ColegioController extends Controller
     {
         $model = new Colegio();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $this->negocio->saveColegio($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -81,7 +88,7 @@ class ColegioController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && ($model=$this->negocio->updateColegio($model))!=null) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -98,7 +105,8 @@ class ColegioController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+       // $this->findModel($id)->delete();
+       $this->negocio->deleteColegio($id);
 
         return $this->redirect(['index']);
     }

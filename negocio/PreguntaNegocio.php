@@ -101,9 +101,9 @@ class PreguntaNegocio {
                     if($model->file!=NULL){
                         $model->file->saveAs($model->imagen);
                     }
-                    if (! empty($deletedIDs)) {
-                        RespuestaExamen::deleteAll(['id' => $deletedIDs]);
-                    }
+//                    if (! empty($deletedIDs)) {
+//                        RespuestaExamen::deleteAll(['id' => $deletedIDs]);
+//                    }
                     foreach ($modelRespuestaExamen as $i=> $modelRespuestaExamen) {
                         $modelRespuestaExamen->imgfile=  UploadedFile::getInstance($modelRespuestaExamen, "[{$i}]imgfile");
                         if($modelRespuestaExamen->imgfile!=NULL){
