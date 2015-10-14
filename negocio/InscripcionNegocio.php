@@ -15,37 +15,35 @@ namespace app\negocio;
 use Yii;
 use app\models\Persona;
 use app\models\InscripcionExamen;
+use app\models\DynamicFormModel;
 class InscripcionNegocio {
    
-    public function RegistrarInscripcion(&$Persona, &$DetalleInscripcion){
+    public function RegistrarInscripcion(&$Persona, $DetalleInscripcion){
        //verificamos si existe la parsona;
-       $flag;
-       $aux=Persona::find()->where(['ci'=>$Persona->ci])->one();
-       
-      if( $aux!=null)//persona existe
-      {
-          $Persona=$aux;
-          Yii::error('persona existe');
-      }else{
-          Yii::error('persona no existe');
-          $Persona->eliminado=0;
-          $flag=$Persona->save(false);
-      }
-      foreach ($DetalleInscripcion as $DetalleInscripcion) {
-        //$DetalleInscripcion->idAlumno = $Persona;
-        Yii::error('asgino id a detalle');
-        $DetalleInscripcion->fecha_inscripcion=  date('Y-M-d H:i:s a');
-        Yii::error('guardo la fecha');
-
-        if (! ($flag = $DetalleInscripcion->save(false))) {
-            Yii::error('error al guardar la transaccion');
-            $transaction->rollBack();
-            return false;
+        $flag;
+        $aux=Persona::find()->where(['ci'=>$Persona->ci])->one();
+        $DetalleInscripcion = DynamicFormModel::createMultiple(InscripcionExamen::className());
+        DynamicFormModel::loadMultiple($DetalleInscripcion, Yii::$app->request->post());
+        $valid = $Persona->validate();
+        $valid = DynamicFormModel::validateMultiple($DetalleInscripcion) && $valid;
+        if( $aux!=null)//persona existe
+        {
+            $Persona=$aux;
+        }else{
+            $Persona->eliminado=0;
+            $flag=$Persona->save(false);
         }
-        $DetalleInscripcion->link('idAlumno',$Persona);
-       }
+        foreach ($DetalleInscripcion as $i => $DetalleInscripcion) {
+          //$DetalleInscripcion->idAlumno = $Persona;
+          $DetalleInscripcion->fecha_inscripcion= date('Y-m-d H:i:s');
+          if (! ($flag = $DetalleInscripcion->save(false))) {
+              $transaction->rollBack();
+              return false;
+          }
+          $DetalleInscripcion->link('idAlumno',$Persona);
+         }
 
-        return true;
+         return true;
     }
   
 }

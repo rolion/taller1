@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use kartik\datecontrol\DateControl;
+use app\models\Persona;
+use app\models\InscripcionExamen;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\InscripcionExamen */
@@ -17,8 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?= Html::a('Update', ['update', 'id' => $persona->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $persona->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
@@ -28,26 +30,35 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <?= DetailView::widget([
-        'model' => $model,
+        'model' => $persona,
         'attributes' => [
-            'id',
-            ['attribute'=>'id_alumno',
-                'value'=>$model->idAlumno->nombre.' '.$model->idAlumno->apellido],
+            'nombre',
+            'apellido',
+            'telefono',
+            'ci',[
+                'attribute'=>'id_colegio',
+                'value'=>$persona->idColegio->nombre
+            ],
+            [
+                'attribute'=>'id_tipo',
+                'value'=>$persona->idTipo->nombre
+            ],
+        ],
+    ]) ?>
+     <?php foreach ($examenes as $i => $examen): ?>
+     <?= DetailView::widget([
+        'model' => $examen,
+        'attributes' => [
             ['attribute'=>'id_examen',
-                'value'=>$model->idExamen->nombre],
+                'value'=>$examen->idExamen->nombre],
             [
                 'attribute'=>'fecha_inscripcion',
-                'format'=>['date', 'd-m-Y'],
-               // 'value'=>$model->fecha_inscripcion,
-                //'type'=>DetailView::INPUT_WIDGET, // setup custom widget
-                'widgetOptions'=>[
-                    'class'=>DateControl::classname(),
-                    'type'=>DateControl::FORMAT_DATE
-                    ]
+                'value'=>Yii::$app->formatter->asDatetime($examen->fecha_inscripcion),
             ],
 
         'fecha_aplicacion',
         ],
     ]) ?>
+      <?php endforeach; ?>
 
 </div>

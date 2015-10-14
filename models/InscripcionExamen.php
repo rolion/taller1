@@ -37,6 +37,7 @@ class InscripcionExamen extends \yii\db\ActiveRecord
         return [
             [['id_alumno', 'id_examen', 'eliminado'], 'integer'],
             [['fecha_inscripcion', 'fecha_aplicacion'], 'safe'],
+            [['fecha_inscripcion','fecha_aplicacion'],'date','format' => 'yyyy-mm-dd'],
             [['id_examen','costo'], 'required'],
             [['costo'], 'number']
         ];

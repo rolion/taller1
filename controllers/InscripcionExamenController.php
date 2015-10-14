@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 use app\models\Persona;
 use app\models\DynamicFormModel;
 use app\negocio\InscripcionNegocio;
-
+use  \yii\helpers\Json;
 /**
  * InscripcionExamenController implements the CRUD actions for InscripcionExamen model.
  */
@@ -51,8 +51,11 @@ class InscripcionExamenController extends Controller
      */
     public function actionView($id)
     {
+        $persona=  Persona::findOne($id);
+        $examenes=  InscripcionExamen::findAll(['id_alumno'=>$persona->id]);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'persona' => $persona,
+            'examenes'=>$examenes
         ]);
     }
 
@@ -63,30 +66,26 @@ class InscripcionExamenController extends Controller
      */
     public function actionCreate()
     {
-        $modelsInscripcion = [new InscripcionExamen()];
+        $modelRespuestaExamen = [new InscripcionExamen()];
         $modelPersona=new Persona();
         $InscripcionNegocio=new InscripcionNegocio;
+
         if ($modelPersona->load(Yii::$app->request->post())) {
-            
             $modelPersona->ciudad="Santa Cruz";
-            $modelRespuestaExamen = DynamicFormModel::createMultiple(InscripcionExamen::className());
-            DynamicFormModel::loadMultiple($modelsInscripcion, Yii::$app->request->post());
             $valid = $modelPersona->validate();
-            $valid = DynamicFormModel::validateMultiple($modelsInscripcion) && $valid;
-            
             if($valid){
-                $InscripcionNegocio->RegistrarInscripcion($modelPersona,$modelsInscripcion);
-            }else
+                $InscripcionNegocio->RegistrarInscripcion($modelPersona,
+                        $modelRespuestaExamen);
+            }else{
                  return $this->render('create', [
-                'modelsInscripcion' => $modelsInscripcion,
+                'modelsInscripcion' => $modelRespuestaExamen,
                 'modelPersona'=>$modelPersona
-            ]);
+                ]);
+            }
             return $this->redirect(['view', 'id' => $modelPersona->id]);
-            
-            
         } else {
             return $this->render('create', [
-                'modelsInscripcion' => $modelsInscripcion,
+                'modelsInscripcion' => $modelRespuestaExamen,
                 'modelPersona'=>$modelPersona
             ]);
         }
@@ -98,6 +97,11 @@ class InscripcionExamenController extends Controller
      * @param integer $id
      * @return mixed
      */
+    public function actionGetPersonaByCi($ci){
+        $persona=Persona::find()->where(['ci'=>$ci,'eliminado'=>0])->one();
+        echo Json::encode($persona);
+   
+    }
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);

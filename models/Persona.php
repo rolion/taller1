@@ -38,7 +38,7 @@ class Persona extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre','apellido','ci'], 'required'],
+            [['nombre','apellido','ci','id_colegio'], 'required'],
             [['id', 'ci', 'id_tipo', 'eliminado', 'id_colegio'], 'integer'],
             [['nombre', 'apellido','ciudad'], 'string', 'max' => 255],
             [['telefono'], 'string', 'max' => 10]

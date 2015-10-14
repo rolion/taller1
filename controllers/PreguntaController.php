@@ -78,7 +78,7 @@ class PreguntaController extends Controller
         $modelRespuestaExamen=[new RespuestaExamen];
 
         if ($model->load(Yii::$app->request->post()) &&
-        $this->negocio->savePregunta($model, $modelRespuestaExamen) ) {
+            $this->negocio->savePregunta($model, $modelRespuestaExamen) ) {
             $dataProvider=new ActiveDataProvider([
                         'query' => RespuestaExamen::find()->where(['id_pregunta'=>$model->id])->orderBy('id'),]);
           return $this->redirect(['view', 'id' => $model->id,'dataProvider'=>$dataProvider]);

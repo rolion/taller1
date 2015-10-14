@@ -2,7 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
+use app\models\Colegio;
 /* @var $this yii\web\View */
 /* @var $model app\models\Persona */
 /* @var $form yii\widgets\ActiveForm */
@@ -12,8 +14,6 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'id')->textInput() ?>
-
     <?= $form->field($model, 'nombre')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'apellido')->textInput(['maxlength' => true]) ?>
@@ -22,11 +22,22 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'ci')->textInput() ?>
 
-    <?= $form->field($model, 'id_tipo')->textInput() ?>
-
-    <?= $form->field($model, 'eliminado')->textInput() ?>
-
-    <?= $form->field($model, 'id_colegio')->textInput() ?>
+    <?= $form->field($model, 'ciudad')->dropDownList(array('Santa Cruz','La Paz','Cochabamba'
+        ,'Beni','Pando','Oruro','Tarija','Chuquisaca')) ?>
+    
+    <?= $form->field($model, 'id_colegio')->widget(Select2::classname(), [
+        'data' => ArrayHelper::map(Colegio::find()->all(), 'id', 'nombre'),
+        'language' => 'en',
+        'options' => ['placeholder' => 'Colegio ...'],
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+    ])?>
+    
+    <?= $form->field($model, 'id_tipo')->dropDownList(
+        ArrayHelper::map(app\models\TipoPersona::find()->all(), 'id', 'nombre'),
+        ['prompt'=>'Seleccione un Tipo'])
+        ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

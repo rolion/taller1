@@ -29,9 +29,9 @@ class TipoPersona extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
+            [['nombre'], 'required'],
             [['id'], 'integer'],
-            [['descripcion'], 'string'],
+            [['descripcion'], 'string','max' => 255],
             [['nombre'], 'string', 'max' => 255]
         ];
     }

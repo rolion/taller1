@@ -7,10 +7,13 @@ use app\models\Examen;
 use app\models\Colegio;
 use kartik\select2\Select2;
 use wbraganca\dynamicform\DynamicFormWidget;
+use app\assets\AppAsset;
+use yii\web\VIEW;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\InscripcionExamen */
 /* @var $form yii\widgets\ActiveForm */
+
 ?>
 
 <div class="inscripcion-examen-form">
@@ -21,7 +24,8 @@ use wbraganca\dynamicform\DynamicFormWidget;
     
     <?= $form->field($modelPersona, 'apellido')->textInput() ?>
     
-    <?= $form->field($modelPersona, 'ci')->textInput() ?>
+    <?= $form->field($modelPersona, 'ci')->textInput(['id'=>'myId','container'=>'myId'])
+           ?>
     <?= $form->field($modelPersona, 'telefono')->textInput() ?>
     
     <?= $form->field($modelPersona, 'ciudad')->dropDownList(array('Santa Cruz','La Paz','Cochabamba'
@@ -34,6 +38,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
         'pluginOptions' => [
             'allowClear' => true
         ],
+        //'pluginLoading'=>false,
     ])?>
     <?= $form->field($modelPersona, 'id_tipo')->dropDownList(
             ArrayHelper::map(app\models\TipoPersona::find()->all(), 'id', 'nombre'),
@@ -110,3 +115,8 @@ use wbraganca\dynamicform\DynamicFormWidget;
     <?php ActiveForm::end(); ?>
 
 </div>
+<?php 
+//AppAsset::register($this);
+//$this->registerJs('pruebajs.js',VIEW::POS_READY);
+?>
+   

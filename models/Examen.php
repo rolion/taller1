@@ -66,6 +66,6 @@ class Examen extends \yii\db\ActiveRecord
      */
     public function getPreguntas()
     {
-        return $this->hasMany(Pregunta::className(), ['id_examen' => 'id']);
+        return $this->hasMany(Pregunta::className(), ['id_examen' => 'id'])->orderBy('nro_pregunta');
     }
 }

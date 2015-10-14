@@ -8,7 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use app\negocio\PersonaNegocio;
 
 /**
  * PersonaController implements the CRUD actions for Persona model.
@@ -16,6 +16,10 @@ use yii\filters\VerbFilter;
 class PersonaController extends Controller
 {
 
+    private $negocio;
+    public function init() {
+        $this->negocio= new PersonaNegocio();
+    }
 
     public function behaviors()
     {
@@ -66,7 +70,7 @@ class PersonaController extends Controller
         $model = new Persona();
 
         if ($model->load(Yii::$app->request->post()) && 
-        $this->negocio->savePregunta($model)) {
+        $this->negocio->savePersona($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -86,7 +90,7 @@ class PersonaController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && 
-                ($model=$this->negocio->updateArea($model))!=null) {
+                ($model=$this->negocio->updatePersona($model))!=null) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -104,7 +108,7 @@ class PersonaController extends Controller
     public function actionDelete($id)
     {
      
-       $this->negocio->deleteArea($id);
+       $this->negocio->deletePersona($id);
         return $this->redirect(['index']);
     }
 

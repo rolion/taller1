@@ -13,6 +13,7 @@
  */
 namespace app\negocio;
 use app\models\Examen;
+use app\models\Pregunta;
 class ExamenNegocio {
     public function saveExamen(&$model){
         if($model->validate()){
@@ -37,5 +38,13 @@ class ExamenNegocio {
             return true;
         }else
             return false;
+    }
+    public function getPreguntasExamen($id){
+        $preguntas=null;
+        $examen=  Examen::findOne($id);
+        if($examen!=null){
+            $preguntas=$examen->preguntas;
+        }
+        return $preguntas;
     }
 }
