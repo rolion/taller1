@@ -36,6 +36,7 @@ class InscripcionNegocio {
         foreach ($DetalleInscripcion as $i => $DetalleInscripcion) {
           //$DetalleInscripcion->idAlumno = $Persona;
           $DetalleInscripcion->fecha_inscripcion= date('Y-m-d H:i:s');
+          $DetalleInscripcion->eliminado=0;
           if (! ($flag = $DetalleInscripcion->save(false))) {
               $transaction->rollBack();
               return false;
