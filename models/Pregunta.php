@@ -37,7 +37,8 @@ class Pregunta extends \yii\db\ActiveRecord
             [['id_area','descripcion_pregunta','id_examen','nro_pregunta'],'required'],
             [['descripcion_pregunta', 'imagen'], 'string'],
             [['file'],'file','extensions'=>'jpg, png'],
-            [['id_examen', 'id_area','nro_pregunta'], 'integer']
+            [['id_examen', 'id_area','nro_pregunta'], 'integer'],
+            [['examenName','areaName'],'safe']
         ];
     }
 
@@ -52,13 +53,23 @@ class Pregunta extends \yii\db\ActiveRecord
             'id_examen' => 'Examen',
             'file' => 'Imagen',
             'id_area' => 'Area',
-            'nro_pregunta'=>'Nro pregunta'
+            'nro_pregunta'=>'Nro pregunta',
+            'examenName'=>Yii::t('app', 'Examen'),
+            'areaName'=>Yii::t('app', 'Area'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getExamenName(){
+        
+        return $this->idExamen->nombre;
+    }
+    public function getAreaName(){
+        return $this->idArea->nombre;
+    }
+
     public function getIdArea()
     {
         return $this->hasOne(Area::className(), ['id' => 'id_area']);

@@ -36,7 +36,7 @@ class InscripcionExamen extends \yii\db\ActiveRecord
     {
         return [
             [['id_alumno', 'id_examen', 'eliminado'], 'integer'],
-            [['fecha_inscripcion', 'fecha_aplicacion'], 'safe'],
+            [['fecha_inscripcion', 'fecha_aplicacion','nombreExamen'], 'safe'],
             [['fecha_inscripcion','fecha_aplicacion'],'date','format' => 'yyyy-mm-dd'],
             [['id_examen','costo'], 'required'],
             [['costo'], 'number']
@@ -56,12 +56,16 @@ class InscripcionExamen extends \yii\db\ActiveRecord
             'fecha_aplicacion' => 'Fecha Aplicacion',
             'costo' => 'Costo',
             'eliminado' => 'Eliminado',
+            'nombreExamen'=>'Examen'
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getNombreExamen(){
+        return $this->idExamen->nombre;
+    }
     public function getIdExamen()
     {
         return $this->hasOne(Examen::className(), ['id' => 'id_examen']);

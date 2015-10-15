@@ -50,7 +50,7 @@ class RespuestaExamen extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'descripcion_respuesta' => 'Descripcion Respuesta',
-            'id_pregunta' => $this->idPregunta->descripcion_pregunta,
+            'id_pregunta' => 'Pregunta',
             'nombre_opcion' => 'Nombre Opcion',
             'imagen' => 'Imagen',
             'puntos_otorgados' => 'Puntos Otorgados',

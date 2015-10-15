@@ -7,12 +7,17 @@ use app\models\RespuestaExamen;
 use app\models\Examen;
 use app\models\RespuestaAlumno;
 use app\models\Pregunta;
-//<?= $respuesta->idPregunta->nro_pregunta 
+
+$this->title = $examen->nombre;
+$this->params['breadcrumbs'][] = ['label' => 'Mis Examenes', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
+
+
 ?>
 
 
 <div class="aplicar-examen-form">
-    
+    <h1><?= Html::encode($this->title) ?></h1>
         
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form',
         'action'=>'index.php?r=aplicar-examen/guardar-respuesta']); ?>
@@ -33,22 +38,17 @@ use app\models\Pregunta;
     ]); ?>
 
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>
-                <i class="glyphicon glyphicon-envelope"></i> <?= $examen->nombre?>
-                
-            </h4>
-        </div>
+       
         <div class="panel-body">
             <div class="container-items"><!-- widgetBody -->
             <?php foreach ($preguntas as $i => $pregunta): ?>
                 <div class="item panel panel-default"><!-- widgetItem -->
                     <div class="panel-heading">
-                        <h3 class="panel-title pull-left"></h3>
+                        <h3 class="panel-title pull-left"><?=$pregunta->nro_pregunta."-". $pregunta->descripcion_pregunta?></h3>
                         <div class="clearfix"></div>
                     </div>
                     <div class="panel-body">
-                        <h2><?= $pregunta->descripcion_pregunta?></h2>
+                        
                         <?=  $form->field($respuestasAlumno[$i], "[{$i}]id_respuesta")->radioList(
                             ArrayHelper::map( RespuestaExamen::
                                find()->where(['id_pregunta'=>$pregunta->id])->all(),

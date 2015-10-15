@@ -56,6 +56,7 @@ class Examen extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+
     public function getInscripcionExamens()
     {
         return $this->hasMany(InscripcionExamen::className(), ['id_examen' => 'id']);

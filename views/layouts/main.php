@@ -27,22 +27,28 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'My Company',
+        'brandLabel' => 'Examenes Psicotecnicos',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    echo Nav::widget([
+    echo Nav::widget([ 
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
+            ['label' => 'Mis Examenes', 'url' => ['/aplicar-examen/index']],
+            ['label' => 'Categoria Pregunta', 'url' => ['/area/create']],
+            ['label' => 'Baremo', 'url' => ['/baremo/create']],
+            ['label' => 'Colegio', 'url' => ['/colegio/create']],
+            ['label' => 'Examen', 'url' => ['/examen/create']],
+            ['label' => 'Pregunta', 'url' => ['/pregunta/create']],
+            ['label' => 'inscripcion', 'url' => ['/inscripcion-examen/create']],
+            
             Yii::$app->user->isGuest ?
                 ['label' => 'Login', 'url' => ['/site/login']] :
                 [
-                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+                    'label' => 'Logout (' . Yii::$app->user->identity->usuario . ')',
                     'url' => ['/site/logout'],
                     'linkOptions' => ['data-method' => 'post']
                 ],
