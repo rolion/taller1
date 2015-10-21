@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS `colegio` (
   `telefono` varchar(10) DEFAULT NULL,
   `eliminado` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
-
+INSERT INTO `colegio` (`id`, `nombre`, `direccion`,`telefono`, `eliminado`) VALUES
+(1, 'Isabel Saavedra', '2do anillo y san aurelio', '79812', 0);
 --
 -- Dumping data for table `colegio`
 --
