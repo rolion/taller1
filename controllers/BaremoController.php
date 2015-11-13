@@ -69,7 +69,8 @@ class BaremoController extends Controller
         $negocio=new BaremoNegocio();
         if ($model->load(Yii::$app->request->post()) 
                 && $negocio->saveBaremo($model)) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            $model=new Baremo();
+            return $this->redirect(['create', 'model' => $model]);
         } else {
             return $this->render('create', [
                 'model' => $model,

@@ -20,6 +20,75 @@ use app\models\Pregunta;
  */
 class PreguntaNegocio {
     private $imgaName;
+    public function savePregunta1(&$model,&$modelRespuestaExamen){
+        $transaction = Yii::$app->db->beginTransaction();
+        try{
+        $model->imagen='uploads/null.png';
+        $model->eliminado=0;
+        $model->save();
+        //f(empty($modelRespuestaExamen)){
+            $respuesta=new RespuestaExamen();
+            $respuesta->descripcion_respuesta='Me gusta';
+            $respuesta->nombre_opcion='A';
+            $respuesta->puntos_otorgados=2;
+            $respuesta->eliminado=false;
+            $respuesta->imagen='uploads/null.png';
+            $respuesta->id_pregunta=$model->id;
+            $respuesta->save();
+            $respuesta->link('idPregunta',$model);
+
+            $respuesta=new RespuestaExamen();
+            $respuesta->descripcion_respuesta='Tengo dudas';
+            $respuesta->nombre_opcion='B';
+            $respuesta->puntos_otorgados=1;
+            $respuesta->eliminado=false;
+            $respuesta->imagen='uploads/null.png';
+            $respuesta->id_pregunta=$model->id;
+            $respuesta->save();
+            $respuesta->link('idPregunta',$model);
+
+            $respuesta=new RespuestaExamen();
+            $respuesta->descripcion_respuesta='No me gusta';
+            $respuesta->nombre_opcion='C';
+            $respuesta->puntos_otorgados=0;
+            $respuesta->eliminado=false;
+            $respuesta->imagen='uploads/null.png';
+            $respuesta->id_pregunta=$model->id;
+            $respuesta->save();
+            $respuesta->link('idPregunta',$model);
+
+            $respuesta=new RespuestaExamen();
+            $respuesta->descripcion_respuesta='No conosco esa actividad o profesion';
+            $respuesta->nombre_opcion='D';
+            $respuesta->puntos_otorgados=0;
+            $respuesta->eliminado=false;
+            $respuesta->imagen='uploads/null.png';
+            $respuesta->id_pregunta=$model->id;
+            $respuesta->save();
+            $respuesta->link('idPregunta',$model);
+       /* }else{
+                    foreach ($modelRespuestaExamen  as $i => $modelRespuestaExamen) {
+                        //cargamos la imagen subida
+                        $modelRespuestaExamen->imgfile= UploadedFile::getInstance($modelRespuestaExamen, "[{$i}]imgfile");
+                        //verificamos si es nula
+                        $this->getImageRespuesta($modelRespuestaExamen);
+                        //cargamos la direccion de la imagen
+                        //$modelRespuestaExamen->imagen='uploads/'.$imageName;
+                        $modelRespuestaExamen->eliminado=0;
+                        if (!($modelRespuestaExamen->validate() && $modelRespuestaExamen->save())) {
+                            $transaction->rollBack();
+                            return false;
+                        }
+                        $modelRespuestaExamen->link('idPregunta',$model);
+                        if($modelRespuestaExamen->imagen!='uploads/null.png'){
+                            $modelRespuestaExamen->imgfile->saveAs($modelRespuestaExamen->imagen);
+                        }     
+                    }*/
+        $transaction->commit();
+        }  catch (Exception $e){
+            $transaction->rollback();
+        }
+    }
     public function savePregunta(&$model, $modelRespuestaExamen){
         $model->file= UploadedFile::getInstance($model, 'file');
         $this->getImagePregunta($model);       

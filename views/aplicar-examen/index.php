@@ -12,14 +12,9 @@
  * @author root
  */
 
-use yii\helpers\ArrayHelper;
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use wbraganca\dynamicform\DynamicFormWidget;
-use app\models\RespuestaExamen;
-use app\models\Examen;
-use app\models\RespuestaAlumno;
-use app\models\Pregunta;
 use yii\grid\GridView;
 
 $this->title = 'Aplicar Examen';
@@ -34,10 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
    
     <div class="form-group">
-       <?php foreach($examenes as $i=> $examen):?>
-            <?= Html::a("{$examen->nombre}", ['aplicar-examen/aplicar','id'=>$examen->id],
-                    ['class'=>'btn btn-primary']) ?>
-       <?php endforeach; ?>
 <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -46,21 +37,31 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'nombreExamen',
             ['class' => 'yii\grid\ActionColumn',
-                'template'=>'{aplicar}',
+                'template'=>'{aplicar}{corregir}',
                 'buttons' => [
                 'aplicar' => function ($url, $model) {
-                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                    return Html::a('<span class="glyphicon glyphicon-open-file"></span>', $url, [
                                 'title' => Yii::t('app', 'Aplicar'),
                             ]);
-                    }
+                    },
+                'corregir'=>function ($url, $model) {
+                    return Html::a('<span class="glyphicon glyphicon-stats"></span>', $url, [
+                                'title' => Yii::t('app', 'Corregir'),
+                            ]);
+                    },
                 ],
                 'urlCreator' => function ($action, $model, $key, $index) {
-                if ($action === 'aplicar') {
-                    $url ='index.php?r=aplicar-examen/aplicar&id='.$model->id_examen;
-                    return $url;
-                }
+                    if ($action === 'aplicar') {
+                        $url ='index.php?r=aplicar-examen/aplicar&id='.$model->id;//le pasamos el id de la inscripcion
+                        return $url;
+                    }
+                    if($action=='corregir'){
+                        $url ='index.php?r=aplicar-examen/sistema-experto&id='.$model->id;//le pasamos el id de la inscripcion
+                        return $url;
+                    }
                 }
             ],
+           
         ],
     ]); ?>
         

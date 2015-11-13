@@ -20,7 +20,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
         
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form',
-        'action'=>'index.php?r=aplicar-examen/guardar-respuesta']); ?>
+        'action'=>'index.php?r=aplicar-examen/guardar-respuesta',
+        'attributes'=>['id'=>$idInscripcion]]); 
+    ?>
 
     <?php DynamicFormWidget::begin([
         'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
@@ -52,8 +54,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?=  $form->field($respuestasAlumno[$i], "[{$i}]id_respuesta")->radioList(
                             ArrayHelper::map( RespuestaExamen::
                                find()->where(['id_pregunta'=>$pregunta->id])->all(),
-                                    'id', 'descripcion_respuesta'))->label(false); ?>
-                        <!-- .row -->
+                                    'id', 'descripcion_respuesta'))->label(false);
+                                    
+                            $form->field($respuestasAlumno[$i], "[{$i}]id_inscripcion",
+                                    ['options'=>['value'=>$idInscripcion]])
+                                    ->hiddenInput()->label(false);
+                        
+                       ?>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -62,7 +69,11 @@ $this->params['breadcrumbs'][] = $this->title;
     </div><!-- .panel -->
     <?php DynamicFormWidget::end(); ?>
     <div class="form-group">
-        <?= Html::submitButton('Guardar', ['class' => 'btn btn-primary']) ?>
+        <?= Html::submitButton('Guardar', ['class' => 'btn btn-primary','value'=>$idInscripcion],['data'=>
+    ['name'=>'id','value'=>1]]);
+            //a('Guardar',['aplicar-examen/guardar-respuesta','id'=>$idInscripcion],['class' => 'btn btn-primary']);
+            //('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']
+            //submitButton('Guardar', ['class' => 'btn btn-primary']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

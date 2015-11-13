@@ -9,9 +9,9 @@ use Yii;
  *
  * @property integer $id
  * @property integer $id_respuesta
- * @property integer $id_alumno
+ * @property integer $id_inscripcion
  *
- * @property Persona $idAlumno
+ * @property InscripcionExamen $idInscripcion
  * @property RespuestaExamen $idRespuesta
  */
 class RespuestaAlumno extends \yii\db\ActiveRecord
@@ -30,7 +30,8 @@ class RespuestaAlumno extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_respuesta', 'id_alumno'], 'integer']
+            [['id_respuesta'],'required'],
+            [['id_respuesta', 'id_inscripcion'], 'integer']
         ];
     }
 
@@ -42,16 +43,16 @@ class RespuestaAlumno extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'id_respuesta' => 'Id Respuesta',
-            'id_alumno' => 'Id Alumno',
+            'id_inscripcion' => 'Id Inscripcion',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getIdAlumno()
+    public function getIdInscripcion()
     {
-        return $this->hasOne(Persona::className(), ['id' => 'id_alumno']);
+        return $this->hasOne(InscripcionExamen::className(), ['id' => 'id_inscripcion']);
     }
 
     /**
@@ -61,4 +62,5 @@ class RespuestaAlumno extends \yii\db\ActiveRecord
     {
         return $this->hasOne(RespuestaExamen::className(), ['id' => 'id_respuesta']);
     }
+
 }

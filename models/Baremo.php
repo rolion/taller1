@@ -11,7 +11,10 @@ use Yii;
  * @property integer $puntiacion_directa
  * @property integer $percentil
  * @property integer $id_area
+ * @property integer $id_tipo
+ * @property integer $eliminado
  *
+ * @property Tipo $idTipo
  * @property Area $idArea
  */
 class Baremo extends \yii\db\ActiveRecord
@@ -30,8 +33,8 @@ class Baremo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['puntiacion_directa', 'percentil', 'id_area'], 'required'],
-            [['id', 'puntiacion_directa', 'percentil', 'id_area'], 'integer']
+            [['puntiacion_directa', 'percentil', 'id_area', 'id_tipo', 'eliminado'], 'integer'],
+            [['id_tipo'], 'required']
         ];
     }
 
@@ -44,8 +47,18 @@ class Baremo extends \yii\db\ActiveRecord
             'id' => 'ID',
             'puntiacion_directa' => 'Puntiacion Directa',
             'percentil' => 'Percentil',
-            'id_area' => 'Area',
+            'id_area' => 'Id Area',
+            'id_tipo' => 'Id Tipo',
+            'eliminado' => 'Eliminado',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdTipo()
+    {
+        return $this->hasOne(Tipo::className(), ['id' => 'id_tipo']);
     }
 
     /**

@@ -66,7 +66,7 @@ class InscripcionExamenController extends Controller
      */
     public function actionCreate()
     {
-        $modelRespuestaExamen = [new InscripcionExamen()];
+        $modelInscripcionExamen = [new InscripcionExamen()];
         $modelPersona=new Persona();
         $InscripcionNegocio=new InscripcionNegocio;
 
@@ -75,17 +75,17 @@ class InscripcionExamenController extends Controller
             $valid = $modelPersona->validate();
             if($valid){
                 $InscripcionNegocio->RegistrarInscripcion($modelPersona,
-                        $modelRespuestaExamen);
+                        $modelInscripcionExamen);
             }else{
                  return $this->render('create', [
-                'modelsInscripcion' => $modelRespuestaExamen,
+                'modelsInscripcion' => $modelInscripcionExamen,
                 'modelPersona'=>$modelPersona
                 ]);
             }
             return $this->redirect(['view', 'id' => $modelPersona->id]);
         } else {
             return $this->render('create', [
-                'modelsInscripcion' => $modelRespuestaExamen,
+                'modelsInscripcion' => $modelInscripcionExamen,
                 'modelPersona'=>$modelPersona
             ]);
         }

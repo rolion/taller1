@@ -12,7 +12,11 @@ use Yii;
  * @property integer $id_examen
  * @property resource $imagen
  * @property integer $id_area
+ * @property integer $nro_pregunta
+ * @property integer $eliminado
+ * @property integer $id_tipo
  *
+ * @property Tipo $idTipo
  * @property Area $idArea
  * @property Examen $idExamen
  * @property RespuestaExamen[] $respuestaExamens
@@ -37,8 +41,7 @@ class Pregunta extends \yii\db\ActiveRecord
             [['id_area','descripcion_pregunta','id_examen','nro_pregunta'],'required'],
             [['descripcion_pregunta', 'imagen'], 'string'],
             [['file'],'file','extensions'=>'jpg, png'],
-            [['id_examen', 'id_area','nro_pregunta'], 'integer'],
-            [['examenName','areaName'],'safe']
+            [['id_examen', 'id_area', 'nro_pregunta', 'eliminado', 'id_tipo'], 'integer']
         ];
     }
 
@@ -50,18 +53,25 @@ class Pregunta extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'descripcion_pregunta' => 'Descripcion Pregunta',
-            'id_examen' => 'Examen',
+            'id_examen' => 'Id Examen',
+            'imagen' => 'Imagen',
+            'id_area' => 'Id Area',
             'file' => 'Imagen',
-            'id_area' => 'Area',
-            'nro_pregunta'=>'Nro pregunta',
+            'nro_pregunta' => 'Nro Pregunta',
+            'eliminado' => 'Eliminado',
+            'id_tipo' => 'Id Tipo',
             'examenName'=>Yii::t('app', 'Examen'),
             'areaName'=>Yii::t('app', 'Area'),
+            'tipoArea'=>Yii::t('app', 'Tipo'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getTipoArea(){
+        return $this->idTipo->nombre;
+    }
     public function getExamenName(){
         
         return $this->idExamen->nombre;
@@ -69,7 +79,14 @@ class Pregunta extends \yii\db\ActiveRecord
     public function getAreaName(){
         return $this->idArea->nombre;
     }
+    public function getIdTipo()
+    {
+        return $this->hasOne(Tipo::className(), ['id' => 'id_tipo']);
+    }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getIdArea()
     {
         return $this->hasOne(Area::className(), ['id' => 'id_area']);

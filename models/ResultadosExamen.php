@@ -11,10 +11,12 @@ use Yii;
  * @property integer $id_examen
  * @property integer $id_area
  * @property integer $nota
- * @property integer $id_alumno
+ * @property integer $id_inscripcion
+ * @property integer $id_tipo
  *
  * @property Area $idArea
- * @property Persona $idAlumno
+ * @property InscripcionExamen $idInscripcion
+ * @property Tipo $idTipo
  */
 class ResultadosExamen extends \yii\db\ActiveRecord
 {
@@ -32,8 +34,8 @@ class ResultadosExamen extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
-            [['id', 'id_examen', 'id_area', 'nota', 'id_alumno'], 'integer']
+            [['id_examen', 'id_area', 'nota', 'id_inscripcion', 'id_tipo'], 'integer'],
+            [['id_inscripcion', 'id_tipo'], 'required']
         ];
     }
 
@@ -45,9 +47,10 @@ class ResultadosExamen extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'id_examen' => 'Id Examen',
-            'id_area' => 'Id Area',
+            'id_area' => 'Area',
             'nota' => 'Nota',
-            'id_alumno' => 'Id Alumno',
+            'id_inscripcion' => 'Id Inscripcion',
+            'id_tipo' => 'Tipo',
         ];
     }
 
@@ -62,8 +65,16 @@ class ResultadosExamen extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getIdAlumno()
+    public function getIdInscripcion()
     {
-        return $this->hasOne(Persona::className(), ['id' => 'id_alumno']);
+        return $this->hasOne(InscripcionExamen::className(), ['id' => 'id_inscripcion']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdTipo()
+    {
+        return $this->hasOne(Tipo::className(), ['id' => 'id_tipo']);
     }
 }

@@ -76,9 +76,13 @@ class PreguntaController extends Controller
     {
         $model = new Pregunta();
         $modelRespuestaExamen=[new RespuestaExamen];
-
-        if ($model->load(Yii::$app->request->post()) &&
-            $this->negocio->savePregunta($model, $modelRespuestaExamen) ) {
+        $model->load(Yii::$app->request->post());
+        $modelRespuestaExamen = DynamicFormModel::createMultiple(RespuestaExamen::className());
+        DynamicFormModel::loadMultiple($modelRespuestaExamen, Yii::$app->request->post());
+        $valid = $model->validate() && DynamicFormModel::validateMultiple($modelRespuestaExamen) ;
+        if ( $valid/*$model->load(Yii::$app->request->post()) &&
+            $this->negocio->savePregunta($model, $modelRespuestaExamen)*/  ) {
+            $this->negocio->savePregunta1($model,$modelRespuestaExamen);
             $dataProvider=new ActiveDataProvider([
                         'query' => RespuestaExamen::find()->where(['id_pregunta'=>$model->id])->orderBy('id'),]);
           return $this->redirect(['view', 'id' => $model->id,'dataProvider'=>$dataProvider]);

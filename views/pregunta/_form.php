@@ -28,6 +28,9 @@ use wbraganca\dynamicform\DynamicFormWidget;
     <?= $form->field($model, 'id_area')->dropDownList(
     ArrayHelper::map(Area::find()->where(['eliminado'=>0])->all(), 'id', 'nombre'),
             ['prompt'=>'Seleccione el area']) ?>
+    <?= $form->field($model, 'id_tipo')->radioList(
+                            ArrayHelper::map(\app\models\Tipo::
+                               find()->all(),'id','nombre'))->label(false); ?>
     
     
     <div class="row">
@@ -40,7 +43,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                 'widgetBody' => '.container-items', // required: css class selector
                 'widgetItem' => '.item', // required: css class
                 'limit' => 4, // the maximum times, an element can be cloned (default 999)
-                'min' => 1, // 0 or 1 (default 1)
+                'min' => 0, // 0 or 1 (default 1)
                 'insertButton' => '.add-item', // css class
                 'deleteButton' => '.remove-item', // css class
                 'model' => $modelRespuestaExamen[0],
