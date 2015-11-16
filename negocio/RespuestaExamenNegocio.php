@@ -16,6 +16,7 @@ namespace app\negocio;
 use Yii;
 use app\models\InscripcionExamen;
 use app\models\RespuestaAlumno;
+use app\models\ResultadosExamen;
 use app\SistemaExperto\backwardchain;
 use app\SistemaExperto\hecho;
 //use app\
@@ -24,35 +25,49 @@ class RespuestaExamenNegocio {
     private $inscripcion;
     
     
-    public function guardarRespuestasAlumno($respuestasAlumno=  array()){
+    public function guardarRespuestasAlumno($respuestasAlumno=  array(),$id_inscripcion){
         $transaction = Yii::$app->db->beginTransaction();
-        $id=null;
         try{
+            $inscripcion=  InscripcionExamen::findOne($id_inscripcion);
             $persona=Yii::$app->user->identity->idPersona;
             foreach($respuestasAlumno as $respuesta){
                 if($respuesta->id_respuesta!=null && !empty($respuesta->id_respuesta)){
-                    $id_examen=$respuesta->idRespuesta->idPregunta->id_examen;
-                    $examen=$this->getExamen($respuesta);
-                    $respuesta->save();
-                    $inscripcion= $this->getInscripcion($persona->id, $examen);
-                    $respuesta->link('idInscripcion',$inscripcion);     
+                    $respuesta->save(); 
+                    $respuesta->link('idInscripcion',$inscripcion);
                 } 
             }
-            $this->inscripcion->fecha_aplicacion=  date('Y-m-d H:i:s');
-            $this->inscripcion->save(false);
-            $id= $this->inscripcion->id;
+            $inscripcion->fecha_aplicacion=  date('Y-m-d H:i:s');
+            $inscripcion->save(false);
             $transaction->commit();
             $sql="CALL obtenerNotas(:id)";
             $command=  \Yii::$app->db->createCommand($sql);
-            $command->bindParam(":id", $id, \PDO::PARAM_INT);
+            $command->bindParam(":id", $id_inscripcion, \PDO::PARAM_INT);
             $command->execute();
             $sql="CALL convertirNotasPercentil(:id)";
             $command=  \Yii::$app->db->createCommand($sql);
-            $command->bindParam(":id", $id, \PDO::PARAM_INT);
+            $command->bindParam(":id", $id_inscripcion, \PDO::PARAM_INT);
             $command->execute();    
         }catch(yii\db\Exception $e){
             $transaction->rollBack( );
             var_dump($e);
+        }
+    }
+    public function encontrarArea($id_inscripcion){
+        $re=new ResultadosExamen();
+        $resultados=$re->find()->where(['id_inscripcion'=>$id_inscripcion,'id_tipo'=>2])
+                ->limit(3)->orderBy(['nota'=>SORT_DESC])->all();
+        foreach ($resultados as $prof){
+            $actividad=$re->find()->where(['id_inscripcion'=>$id_inscripcion,'id_tipo'=>1,
+                'id_area'=>$prof->id_area])->one();
+                if($actividad->nota>$prof->nota){
+                    $diferencia=$actividad->nota-$prof->nota;
+                }else{
+                    $diferencia=$prof->nota-$actividad->nota;
+                }
+                if( ($diferencia>=0 && $diferencia<=25)){
+                    
+                    return $prof;
+                }
         }
     }
     public function procesarRespuestas($id){

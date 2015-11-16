@@ -38,8 +38,8 @@ class backwardchain {
     
     private static $PERFIL='perfil';
     
-    private static $DEFINIDO='definido';
-    private static $NO_DEFINIDO='no definido';
+    public static $DEFINIDO='definido';
+    public static $NO_DEFINIDO='no definido';
     
     private static $DISCREPANCIA='discrepancia';
     private static $EXISTE='existe';
@@ -49,6 +49,12 @@ class backwardchain {
     private static $TODAS_B="todas B";
     private static $TODAS_C="todas C";
     private static $TODAS_D="todas D";
+    private static $NRO_PROF_PREF="nro de profeciones preferias con nota >60";
+    private static $DISCREPANCIA_PROF_PREF="discrepancia en profesiones preferidas";
+    private static $plano='Plano';
+    
+    public static $SIN_CONCLUSION="sin conclusion";
+    public static $SIN_INFORMACION="La persona necesita mas informacion sobre las carreras";
     
     function getBh() {
         return $this->bh;
@@ -172,11 +178,6 @@ class backwardchain {
         $todasC=false;
         $todasD=false;
         $this->obtenerVariables($cantR, $todasA, $todasB, $todasC, $todasD,$id_inscripcion);
-        $hecho1=new hecho();
-        $hecho1->setVariable(self::$CANT_RESP);
-        $hecho1->setValor($cantR);
-        $hecho1->setEsNumerico(TRUE);
-        $this->bh->addHecho($hecho1);
         
         $hecho2=new hecho();
         $hecho2->setVariable(self::$TODAS_A);
@@ -201,7 +202,7 @@ class backwardchain {
         $hecho5->setValor($todasD);
         $hecho5->setEsNumerico(TRUE);
         $this->bh->addHecho($hecho5);
-        $this->puntuacionIguales($id_inscripcion);
+        $this->calcularNroProfPref($id_inscripcion);
         $this->obtenerDisprepancia($id_inscripcion);     
     }
     private function puntuacionIguales($id_inscripcion){
@@ -224,20 +225,38 @@ class backwardchain {
         $hecho6->setEsNumerico(FALSE);
         $this->bh->addHecho($hecho6);
     }
+    private function calcularNroProfPref($id_inscripcion){
+        $hecho=new hecho();
+        $hecho->setVariable(self::$NRO_PROF_PREF);
+        $hecho->setEsNumerico(TRUE);
+        $re=new ResultadosExamen();
+        $resultados=$re->find()->where(['id_inscripcion'=>$id_inscripcion,'id_tipo'=>2,])->andWhere(['>=','nota',60])
+                ->orderBy(['nota'=>SORT_DESC])->all();
+        $valor=  count($resultados);
+        $hecho->setValor($valor);
+        $this->bh->addHecho($hecho);
+        
+    }
     private function obtenerDisprepancia($id_inscripcion){
 
         $discrepancia=new hecho();
-        $discrepancia->setVariable(self::$DISCREPANCIA);
+        $discrepancia->setVariable(self::$DISCREPANCIA_PROF_PREF);
         $re=new ResultadosExamen();
-        $resultados=$re->find()->where(['id_inscripcion'=>$id_inscripcion,'id_tipo'=>2])->all();
-        $valid=TRUE;
+        $resultados=$re->find()->where(['id_inscripcion'=>$id_inscripcion,'id_tipo'=>2])->andWhere(['>=','nota',60])
+                ->limit(3)->orderBy(['nota'=>SORT_DESC])->all();
+        $valid=FALSE;
         
         foreach ($resultados as $prof){
-            $actividad=$re->find()->where(['id_inscripcion'=>$id_inscripcion,'id_tipo'=>1, 'id_area'=>$prof->id_tipo])->one();
-                $diferencia=$prof->nota-$actividad->nota;
-                $valid=$valid && ($diferencia>2 && $diferencia<=25);
+            $actividad=$re->find()->where(['id_inscripcion'=>$id_inscripcion,'id_tipo'=>1,
+                'id_area'=>$prof->id_area])->one();
+                if($actividad->nota>$prof->nota){
+                    $diferencia=$actividad->nota-$prof->nota;
+                }else{
+                    $diferencia=$prof->nota-$actividad->nota;
+                }
+                $valid=$valid || ($diferencia>=0 && $diferencia<=25);
         }
-        $discrepancia->setValor($valid?self::$EXISTE:self::$NO_EXISTE);
+        $discrepancia->setValor($valid?self::$NO_EXISTE:self::$EXISTE);
         $discrepancia->setEsNumerico(FALSE);
         $this->bh->addHecho($discrepancia);
     }
@@ -267,13 +286,6 @@ class backwardchain {
         $this->regla8();
         $this->regla9();
         $this->regla10();
-        $this->regla11();
-        $this->regla12();
-        $this->regla13();
-        $this->regla14();
-        $this->regla15();
-        $this->regla16();
-        $this->regla17();
     }
     private function regla1(){
         $hecho=new hecho();
@@ -506,425 +518,180 @@ class backwardchain {
         $regla1->setConsecuente($consecuente);
         $this->reglas[]=$regla1;
     }
-//    private function regla6(){
-//        $h_cant_resp=new hecho();
-//        $h_cant_resp->setEsNumerico(TRUE);
-//        $h_cant_resp->setVariable(self::$CANT_RESP);
-//        $h_cant_resp->setValor(self::$VAL_CANT_RESP);
-//        $l_cant_resp=new literal();
-//        $l_cant_resp->setHecho($h_cant_resp);
-//        $l_cant_resp->setOprel(literal::$MAYOR_IGUAL);
-//        
-//        $h_respuestas=new hecho();
-//        $h_respuestas->setVariable(self::$RESPUESTA);
-//        $h_respuestas->setValor(self::$VALIDA);
-//        $h_respuestas->setEsNumerico(FALSE);
-//        $l_respuesta=new literal();
-//        $l_respuesta->setHecho($h_respuestas);
-//        $l_respuesta->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$EXAMEN);
-//        $consecuente->setValor(self::$VALIDA);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($l_cant_resp);
-//        $regla->addLiteral($l_respuesta);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//        private function regla7(){
-//        $h_cant_resp=new hecho();
-//        $h_cant_resp->setEsNumerico(TRUE);
-//        $h_cant_resp->setVariable(self::$CANT_RESP);
-//        $h_cant_resp->setValor(self::$VAL_CANT_RESP);
-//        $l_cant_resp=new literal();
-//        $l_cant_resp->setHecho($h_cant_resp);
-//        $l_cant_resp->setOprel(literal::$MENOR);
-//        
-//        $h_respuestas=new hecho();
-//        $h_respuestas->setVariable(self::$RESPUESTA);
-//        $h_respuestas->setValor(self::$VALIDA);
-//        $h_respuestas->setEsNumerico(FALSE);
-//        $l_respuesta=new literal();
-//        $l_respuesta->setHecho($h_respuestas);
-//        $l_respuesta->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$EXAMEN);
-//        $consecuente->setValor(self::$NO_VALIDA);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($l_cant_resp);
-//        $regla->addLiteral($l_respuesta);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//        private function regla8(){
-//        $h_cant_resp=new hecho();
-//        $h_cant_resp->setEsNumerico(TRUE);
-//        $h_cant_resp->setVariable(self::$CANT_RESP);
-//        $h_cant_resp->setValor(self::$VAL_CANT_RESP);
-//        $l_cant_resp=new literal();
-//        $l_cant_resp->setHecho($h_cant_resp);
-//        $l_cant_resp->setOprel(literal::$MENOR);
-//        
-//        $h_respuestas=new hecho();
-//        $h_respuestas->setVariable(self::$RESPUESTA);
-//        $h_respuestas->setValor(self::$NO_VALIDA);
-//        $h_respuestas->setEsNumerico(FALSE);
-//        $l_respuesta=new literal();
-//        $l_respuesta->setHecho($h_respuestas);
-//        $l_respuesta->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$EXAMEN);
-//        $consecuente->setValor(self::$NO_VALIDA);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($l_cant_resp);
-//        $regla->addLiteral($l_respuesta);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//        private function regla9(){
-//        $h_cant_resp=new hecho();
-//        $h_cant_resp->setEsNumerico(TRUE);
-//        $h_cant_resp->setVariable(self::$CANT_RESP);
-//        $h_cant_resp->setValor(self::$VAL_CANT_RESP);
-//        $l_cant_resp=new literal();
-//        $l_cant_resp->setHecho($h_cant_resp);
-//        $l_cant_resp->setOprel(literal::$MAYOR_IGUAL);
-//        
-//        $h_respuestas=new hecho();
-//        $h_respuestas->setVariable(self::$RESPUESTA);
-//        $h_respuestas->setValor(self::$NO_VALIDA);
-//        $h_respuestas->setEsNumerico(FALSE);
-//        $l_respuesta=new literal();
-//        $l_respuesta->setHecho($h_respuestas);
-//        $l_respuesta->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$EXAMEN);
-//        $consecuente->setValor(self::$NO_VALIDA);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($l_cant_resp);
-//        $regla->addLiteral($l_respuesta);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//    private function regla10(){
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$PUNTUACION_PERCENTIL);
-//        $hecho->setValor(self::$IGUAL);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal1=new literal();
-//        $literal1->setHecho($hecho);
-//        $literal1->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$DISCREPANCIA);
-//        $hecho->setValor(self::$NO_EXISTE);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal2=new literal();
-//        $literal2->setHecho($hecho);
-//        $literal2->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$EXAMEN);
-//        $hecho->setValor(self::$VALIDA);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal3=new literal();
-//        $literal3->setHecho($hecho);
-//        $literal3->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$PERFIL);
-//        $consecuente->setValor(self::$NO_DEFINIDO);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($literal1);
-//        $regla->addLiteral($literal2);
-//        $regla->addLiteral($literal3);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//    
-//    private function regla11(){
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$PUNTUACION_PERCENTIL);
-//        $hecho->setValor(self::$NO_IGUAL);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal1=new literal();
-//        $literal1->setHecho($hecho);
-//        $literal1->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$DISCREPANCIA);
-//        $hecho->setValor(self::$EXISTE);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal2=new literal();
-//        $literal2->setHecho($hecho);
-//        $literal2->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$EXAMEN);
-//        $hecho->setValor(self::$VALIDA);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal3=new literal();
-//        $literal3->setHecho($hecho);
-//        $literal3->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$PERFIL);
-//        $consecuente->setValor(self::$NO_DEFINIDO);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($literal1);
-//        $regla->addLiteral($literal2);
-//        $regla->addLiteral($literal3);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//    private function regla12(){
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$PUNTUACION_PERCENTIL);
-//        $hecho->setValor(self::$NO_IGUAL);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal1=new literal();
-//        $literal1->setHecho($hecho);
-//        $literal1->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$DISCREPANCIA);
-//        $hecho->setValor(self::$NO_EXISTE);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal2=new literal();
-//        $literal2->setHecho($hecho);
-//        $literal2->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$EXAMEN);
-//        $hecho->setValor(self::$VALIDA);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal3=new literal();
-//        $literal3->setHecho($hecho);
-//        $literal3->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$PERFIL);
-//        $consecuente->setValor(self::$DEFINIDO);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($literal1);
-//        $regla->addLiteral($literal2);
-//        $regla->addLiteral($literal3);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//    private function regla13(){
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$PUNTUACION_PERCENTIL);
-//        $hecho->setValor(self::$NO_IGUAL);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal1=new literal();
-//        $literal1->setHecho($hecho);
-//        $literal1->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$DISCREPANCIA);
-//        $hecho->setValor(self::$NO_EXISTE);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal2=new literal();
-//        $literal2->setHecho($hecho);
-//        $literal2->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$EXAMEN);
-//        $hecho->setValor(self::$NO_VALIDA);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal3=new literal();
-//        $literal3->setHecho($hecho);
-//        $literal3->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$PERFIL);
-//        $consecuente->setValor(self::$NO_DEFINIDO);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($literal1);
-//        $regla->addLiteral($literal2);
-//        $regla->addLiteral($literal3);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//    private function regla14(){
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$PUNTUACION_PERCENTIL);
-//        $hecho->setValor(self::$NO_IGUAL);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal1=new literal();
-//        $literal1->setHecho($hecho);
-//        $literal1->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$DISCREPANCIA);
-//        $hecho->setValor(self::$EXISTE);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal2=new literal();
-//        $literal2->setHecho($hecho);
-//        $literal2->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$EXAMEN);
-//        $hecho->setValor(self::$NO_VALIDA);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal3=new literal();
-//        $literal3->setHecho($hecho);
-//        $literal3->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$PERFIL);
-//        $consecuente->setValor(self::$NO_VALIDA);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($literal1);
-//        $regla->addLiteral($literal2);
-//        $regla->addLiteral($literal3);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//    private function regla15(){
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$PUNTUACION_PERCENTIL);
-//        $hecho->setValor(self::$IGUAL);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal1=new literal();
-//        $literal1->setHecho($hecho);
-//        $literal1->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$DISCREPANCIA);
-//        $hecho->setValor(self::$NO_EXISTE);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal2=new literal();
-//        $literal2->setHecho($hecho);
-//        $literal2->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$EXAMEN);
-//        $hecho->setValor(self::$NO_VALIDA);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal3=new literal();
-//        $literal3->setHecho($hecho);
-//        $literal3->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$PERFIL);
-//        $consecuente->setValor(self::$NO_VALIDA);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($literal1);
-//        $regla->addLiteral($literal2);
-//        $regla->addLiteral($literal3);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//    private function regla16(){
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$PUNTUACION_PERCENTIL);
-//        $hecho->setValor(self::$IGUAL);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal1=new literal();
-//        $literal1->setHecho($hecho);
-//        $literal1->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$DISCREPANCIA);
-//        $hecho->setValor(self::$EXISTE);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal2=new literal();
-//        $literal2->setHecho($hecho);
-//        $literal2->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$EXAMEN);
-//        $hecho->setValor(self::$VALIDA);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal3=new literal();
-//        $literal3->setHecho($hecho);
-//        $literal3->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$PERFIL);
-//        $consecuente->setValor(self::$NO_DEFINIDO);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($literal1);
-//        $regla->addLiteral($literal2);
-//        $regla->addLiteral($literal3);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
-//    private function regla17(){
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$PUNTUACION_PERCENTIL);
-//        $hecho->setValor(self::$IGUAL);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal1=new literal();
-//        $literal1->setHecho($hecho);
-//        $literal1->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$DISCREPANCIA);
-//        $hecho->setValor(self::$EXISTE);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal2=new literal();
-//        $literal2->setHecho($hecho);
-//        $literal2->setOprel(literal::$IGUAL);
-//        
-//        $hecho=new hecho();
-//        $hecho->setVariable(self::$EXAMEN);
-//        $hecho->setValor(self::$NO_VALIDA);
-//        $hecho->setEsNumerico(FALSE);
-//        
-//        $literal3=new literal();
-//        $literal3->setHecho($hecho);
-//        $literal3->setOprel(literal::$IGUAL);
-//        
-//        $consecuente=new hecho();
-//        $consecuente->setVariable(self::$PERFIL);
-//        $consecuente->setValor(self::$NO_DEFINIDO);
-//        
-//        $regla=new regla();
-//        $regla->addLiteral($literal1);
-//        $regla->addLiteral($literal2);
-//        $regla->addLiteral($literal3);
-//        $regla->setConsecuente($consecuente);
-//        $this->reglas[]=$regla;
-//    }
+    private function regla6(){
+        $hecho1=new hecho();
+        $hecho1->setVariable(self::$RESPUESTA);
+        $hecho1->setValor(self::$VALIDA);
+        $hecho1->setEsNumerico(FALSE);
+        
+        $hecho2=new hecho();
+        $hecho2->setVariable(self::$NRO_PROF_PREF);
+        $hecho2->setValor(4);
+        $hecho2->setEsNumerico(TRUE);
+        
+        $hecho3=new hecho();
+        $hecho3->setVariable(self::$DISCREPANCIA_PROF_PREF);
+        $hecho3->setValor(self::$NO_EXISTE);
+        
+        $literal1=new literal();
+        $literal1->setHecho($hecho1);
+        $literal1->setOprel(literal::$IGUAL);
+
+        $literal2=new literal();
+        $literal2->setHecho($hecho2);
+        $literal2->setOprel(literal::$MENOR); 
+        
+        $literal3=new literal();
+        $literal3->setHecho($hecho3);
+        $literal3->setOprel(literal::$IGUAL);
+        
+        $consecuente=new hecho();
+        $consecuente->setVariable(self::$PERFIL);
+        $consecuente->setValor(self::$DEFINIDO);
+        $consecuente->setEsNumerico(FALSE);
+        
+        $regla=new regla();
+        $regla->addLiteral($literal1);
+        $regla->addLiteral($literal2);
+        $regla->addLiteral($literal3);
+        $regla->setConsecuente($consecuente);
+        $this->reglas[]=$regla;
+    }
+    private function regla7(){
+        $hecho1=new hecho();
+        $hecho1->setVariable(self::$RESPUESTA);
+        $hecho1->setValor(self::$NO_VALIDA);
+        $hecho1->setEsNumerico(FALSE);
+        
+        $literal1=new literal();
+        $literal1->setHecho($hecho1);
+        $literal1->setOprel(literal::$IGUAL);
+        
+        $consecuente=new hecho();
+        $consecuente->setVariable(self::$PERFIL);
+        $consecuente->setValor('Examen no valido');
+        $consecuente->setEsNumerico(FALSE);
+        
+        $regla=new regla();
+        $regla->addLiteral($literal1);
+        $regla->setConsecuente($consecuente);
+        $this->reglas[]=$regla;
+    }
+    private function regla8(){
+        $hecho1=new hecho();
+        $hecho1->setVariable(self::$RESPUESTA);
+        $hecho1->setValor(self::$VALIDA);
+        $hecho1->setEsNumerico(FALSE);
+        
+        $hecho2=new hecho();
+        $hecho2->setVariable(self::$NRO_PROF_PREF);
+        $hecho2->setValor(4);
+        $hecho2->setEsNumerico(TRUE);
+        
+        $hecho3=new hecho();
+        $hecho3->setVariable(self::$DISCREPANCIA_PROF_PREF);
+        $hecho3->setValor(self::$NO_EXISTE);
+        
+        $literal1=new literal();
+        $literal1->setHecho($hecho1);
+        $literal1->setOprel(literal::$IGUAL);
+
+        $literal2=new literal();
+        $literal2->setHecho($hecho2);
+        $literal2->setOprel(literal::$MAYOR_IGUAL); 
+        
+        $literal3=new literal();
+        $literal3->setHecho($hecho3);
+        $literal3->setOprel(literal::$IGUAL);
+        
+        $consecuente=new hecho();
+        $consecuente->setVariable(self::$PERFIL);
+        $consecuente->setValor(self::$plano);
+        $consecuente->setEsNumerico(FALSE);
+        
+        $regla=new regla();
+        $regla->addLiteral($literal1);
+        $regla->addLiteral($literal2);
+        $regla->addLiteral($literal3);
+        $regla->setConsecuente($consecuente);
+        $this->reglas[]=$regla;
+    }
+    private function regla9(){
+        $hecho1=new hecho();
+        $hecho1->setVariable(self::$RESPUESTA);
+        $hecho1->setValor(self::$VALIDA);
+        $hecho1->setEsNumerico(FALSE);
+        
+        $hecho2=new hecho();
+        $hecho2->setVariable(self::$NRO_PROF_PREF);
+        $hecho2->setValor(4);
+        $hecho2->setEsNumerico(TRUE);
+        
+        $hecho3=new hecho();
+        $hecho3->setVariable(self::$DISCREPANCIA_PROF_PREF);
+        $hecho3->setValor(self::$EXISTE);
+        
+        $literal1=new literal();
+        $literal1->setHecho($hecho1);
+        $literal1->setOprel(literal::$IGUAL);
+
+        $literal2=new literal();
+        $literal2->setHecho($hecho2);
+        $literal2->setOprel(literal::$MAYOR_IGUAL); 
+        
+        $literal3=new literal();
+        $literal3->setHecho($hecho3);
+        $literal3->setOprel(literal::$IGUAL);
+        
+        $consecuente=new hecho();
+        $consecuente->setVariable(self::$PERFIL);
+        $consecuente->setValor(self::$NO_DEFINIDO);
+        $consecuente->setEsNumerico(FALSE);
+        
+        $regla=new regla();
+        $regla->addLiteral($literal1);
+        $regla->addLiteral($literal2);
+        $regla->addLiteral($literal3);
+        $regla->setConsecuente($consecuente);
+        $this->reglas[]=$regla;
+    }
+    private function regla10(){
+        $hecho1=new hecho();
+        $hecho1->setVariable(self::$RESPUESTA);
+        $hecho1->setValor(self::$VALIDA);
+        $hecho1->setEsNumerico(FALSE);
+        
+        $hecho2=new hecho();
+        $hecho2->setVariable(self::$NRO_PROF_PREF);
+        $hecho2->setValor(4);
+        $hecho2->setEsNumerico(TRUE);
+        
+        $hecho3=new hecho();
+        $hecho3->setVariable(self::$DISCREPANCIA_PROF_PREF);
+        $hecho3->setValor(self::$EXISTE);
+        
+        $literal1=new literal();
+        $literal1->setHecho($hecho1);
+        $literal1->setOprel(literal::$IGUAL);
+
+        $literal2=new literal();
+        $literal2->setHecho($hecho2);
+        $literal2->setOprel(literal::$MENOR); 
+        
+        $literal3=new literal();
+        $literal3->setHecho($hecho3);
+        $literal3->setOprel(literal::$IGUAL);
+        
+        $consecuente=new hecho();
+        $consecuente->setVariable(self::$PERFIL);
+        $consecuente->setValor(self::$NO_DEFINIDO);
+        $consecuente->setEsNumerico(FALSE);
+        
+        $regla=new regla();
+        $regla->addLiteral($literal1);
+        $regla->addLiteral($literal2);
+        $regla->addLiteral($literal3);
+        $regla->setConsecuente($consecuente);
+        $this->reglas[]=$regla;
+    }
 }

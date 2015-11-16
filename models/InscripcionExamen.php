@@ -12,18 +12,21 @@ use Yii;
  * @property integer $id_examen
  * @property string $fecha_inscripcion
  * @property string $fecha_aplicacion
- * @property double $costo
  * @property integer $eliminado
+ * @property double $costo
+ * @property integer $id_llave
  *
+ * @property Llave $idLlave
  * @property Examen $idExamen
  * @property Persona $idAlumno
+ * @property RespuestaAlumno[] $respuestaAlumnos
+ * @property ResultadosExamen[] $resultadosExamens
  */
 class InscripcionExamen extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
-
     public static function tableName()
     {
         return 'inscripcion_examen';
@@ -35,11 +38,11 @@ class InscripcionExamen extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_alumno', 'id_examen', 'eliminado'], 'integer'],
-            [['fecha_inscripcion', 'fecha_aplicacion','nombreExamen'], 'safe'],
-            [['fecha_inscripcion','fecha_aplicacion'],'date','format' => 'yyyy-mm-dd'],
-            [['id_examen','costo'], 'required'],
-            [['costo'], 'number']
+            [['id_alumno', 'id_examen', 'eliminado', 'id_llave'], 'integer'],
+            [['fecha_inscripcion', 'fecha_aplicacion'],'safe'],
+            [['fecha_inscripcion', 'fecha_aplicacion'], 'date','format' => 'yyyy-mm-dd'],
+            [['costo'], 'number'],
+            [['fecha_inscripcion'], 'required']
         ];
     }
 
@@ -54,18 +57,23 @@ class InscripcionExamen extends \yii\db\ActiveRecord
             'id_examen' => 'Examen',
             'fecha_inscripcion' => 'Fecha Inscripcion',
             'fecha_aplicacion' => 'Fecha Aplicacion',
-            'costo' => 'Costo',
             'eliminado' => 'Eliminado',
-            'nombreExamen'=>'Examen'
+            'costo' => 'Costo',
+            'id_llave' => 'Id Llave',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getNombreExamen(){
-        return $this->idExamen->nombre;
+    public function getIdLlave()
+    {
+        return $this->hasOne(Llave::className(), ['id' => 'id_llave']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getIdExamen()
     {
         return $this->hasOne(Examen::className(), ['id' => 'id_examen']);
@@ -77,5 +85,21 @@ class InscripcionExamen extends \yii\db\ActiveRecord
     public function getIdAlumno()
     {
         return $this->hasOne(Persona::className(), ['id' => 'id_alumno']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRespuestaAlumnos()
+    {
+        return $this->hasMany(RespuestaAlumno::className(), ['id_inscripcion' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getResultadosExamens()
+    {
+        return $this->hasMany(ResultadosExamen::className(), ['id_inscripcion' => 'id']);
     }
 }

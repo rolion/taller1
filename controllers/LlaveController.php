@@ -3,24 +3,17 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Persona;
+use app\models\Llave;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use app\negocio\PersonaNegocio;
 
 /**
- * PersonaController implements the CRUD actions for Persona model.
+ * LlaveController implements the CRUD actions for Llave model.
  */
-class PersonaController extends Controller
+class LlaveController extends Controller
 {
-
-    private $negocio;
-    public function init() {
-        $this->negocio= new PersonaNegocio();
-    }
-
     public function behaviors()
     {
         return [
@@ -34,13 +27,13 @@ class PersonaController extends Controller
     }
 
     /**
-     * Lists all Persona models.
+     * Lists all Llave models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Persona::find(),
+            'query' => Llave::find(),
         ]);
 
         return $this->render('index', [
@@ -49,7 +42,7 @@ class PersonaController extends Controller
     }
 
     /**
-     * Displays a single Persona model.
+     * Displays a single Llave model.
      * @param integer $id
      * @return mixed
      */
@@ -59,20 +52,42 @@ class PersonaController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
+    function generaPass(){
+        //Se define una cadena de caractares. Te recomiendo que uses esta.
+        $cadena = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+        //Obtenemos la longitud de la cadena de caracteres
+        $longitudCadena=strlen($cadena);
+
+        //Se define la variable que va a contener la contraseña
+        $pass = "";
+        //Se define la longitud de la contraseña, en mi caso 10, pero puedes poner la longitud que quieras
+        $longitudPass=10;
+
+        //Creamos la contraseña
+        for($i=1 ; $i<=$longitudPass ; $i++){
+            //Definimos numero aleatorio entre 0 y la longitud de la cadena de caracteres-1
+            $pos=rand(0,$longitudCadena-1);
+
+            //Vamos formando la contraseña en cada iteraccion del bucle, añadiendo a la cadena $pass la letra correspondiente a la posicion $pos en la cadena de caracteres definida.
+            $pass .= substr($cadena,$pos,1);
+        }
+        return $pass;
+    }
 
     /**
-     * Creates a new Persona model.
+     * Creates a new Llave model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Persona();
-
-        if ($model->load(Yii::$app->request->post()) && 
-        $this->negocio->savePersona($model)) {
-    
-            return $this->redirect(['site/login']);
+        $model = new Llave();
+        $llave=  $this->generaPass();
+        
+        if ($model->load(Yii::$app->request->post()) ) {
+            $model->llave=$llave;
+            $model->save();
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -81,7 +96,7 @@ class PersonaController extends Controller
     }
 
     /**
-     * Updates an existing Persona model.
+     * Updates an existing Llave model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -90,8 +105,7 @@ class PersonaController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && 
-                ($model=$this->negocio->updatePersona($model))!=null) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -101,28 +115,28 @@ class PersonaController extends Controller
     }
 
     /**
-     * Deletes an existing Persona model.
+     * Deletes an existing Llave model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
-     
-       $this->negocio->deletePersona($id);
+        $this->findModel($id)->delete();
+
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Persona model based on its primary key value.
+     * Finds the Llave model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Persona the loaded model
+     * @return Llave the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Persona::findOne($id)) !== null) {
+        if (($model = Llave::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -27,6 +27,10 @@ class Persona extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    
+    private $nick;
+    private $pass;
+    private $llave;
     public static function tableName()
     {
         return 'persona';
@@ -38,9 +42,10 @@ class Persona extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre','apellido','ci','id_colegio'], 'required'],
+            [['nombre','apellido','ci','id_colegio','nick','pass',], 'required'],
             [['id', 'ci', 'id_tipo', 'eliminado', 'id_colegio'], 'integer'],
             [['nombre', 'apellido','ciudad'], 'string', 'max' => 255],
+            [['nick','pass'],'string','max'=>8],
             [['telefono'], 'string', 'max' => 10]
         ];
     }
@@ -59,6 +64,8 @@ class Persona extends \yii\db\ActiveRecord
             'id_tipo' => 'Tipo',
             'eliminado' => 'Eliminado',
             'id_colegio' => 'Colegio',
+            'nick'=>'Nombre Cuenta',
+            'pass'=>'Contraseña'
         ];
     }
 
@@ -101,4 +108,29 @@ class Persona extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ResultadosExamen::className(), ['id_alumno' => 'id']);
     }
+    function getNick() {
+        return $this->nick;
+    }
+
+    function getPass() {
+        return $this->pass;
+    }
+
+    function setNick($nickname) {
+        $this->nick = $nickname;
+    }
+
+    function setPass($pass) {
+        $this->pass = $pass;
+    }
+
+    function getLlave() {
+        return $this->llave;
+    }
+
+    function setLlave($llave) {
+        $this->llave = $llave;
+    }
+
+
 }

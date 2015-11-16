@@ -13,20 +13,33 @@
  */
 namespace app\negocio;
 use app\models\Persona;
+use app\models\Usuario;
+use app\models\Llave;
 class PersonaNegocio {
     
     
     public function savePersona($persona){
         if($persona!=null){
             //validar que el ci no exista
-            if(Persona::findOne(['eliminado'=>0,'ci'=>$persona->ci])==null 
-                    && $persona->validate()){//la persona no existe
+           //la persona no existe
                 $persona->eliminado=0;
+                $usuario=new Usuario();
+                $usuario->usuario=$persona->nick;
+                $usuario->contrasenha=$persona->pass;
+                $persona->id_tipo=1;
                 $persona->save(false);
+                $usuario->id_persona=$persona->id;
+                $usuario->save();
                 return true;
             }
-            return false;
+    }
+    private function llaveExiste($llave){
+        $l=new Llave();
+        $result=$l->find()->where(['llave',$llave]);
+        if($result!=null && count($result)>0){
+            return true;
         }
+        return false;
     }
     public function updatePersona($persona){
         if($persona!=null){

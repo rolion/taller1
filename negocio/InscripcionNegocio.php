@@ -16,7 +16,31 @@ use Yii;
 use app\models\Persona;
 use app\models\InscripcionExamen;
 use app\models\DynamicFormModel;
+use app\models\Llave;
 class InscripcionNegocio {
+    
+    public function inscripcionPorLlave($model){
+        $llave=  Llave::find()->where(['llave'=>$model->llave])->one();
+            if($llave!=null && !empty($llave)){
+                $examen=  \app\models\Examen::findOne($model->id_examen);
+                $inscripcion=new InscripcionExamen();
+                $persona=Yii::$app->user->identity->idPersona;
+                if($persona->id_colegio==$llave->id_colegio){
+                    $inscripcion->fecha_inscripcion=date('Y-m-d H:i:s');
+                    $inscripcion->eliminado=0;
+                    if($inscripcion->save(false)){
+                        $inscripcion->link('idAlumno', $persona);
+                        $inscripcion->link('idExamen', $examen);
+                        $inscripcion->link('idLlave', $llave);
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+                
+            }
+            return false;
+    }
    
     public function RegistrarInscripcion(&$Persona, $DetalleInscripcion){
        //verificamos si existe la parsona;

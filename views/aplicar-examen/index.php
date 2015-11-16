@@ -35,7 +35,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'nombreExamen',
+            [
+              'attribute'=>'id_examen',
+               'value'=>function($model){
+                        return $model->idExamen->nombre;
+               }
+            ],
+            //'nombreExamen',
             ['class' => 'yii\grid\ActionColumn',
                 'template'=>'{aplicar}{corregir}',
                 'buttons' => [

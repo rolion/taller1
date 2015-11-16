@@ -5,9 +5,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+
 use yii\grid\GridView;
 
 $this->title = 'Resultados Examen';
@@ -15,6 +13,17 @@ $this->params['breadcrumbs'][] = ['label' => 'Mis Examenes', 'url' => ['index']]
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1>Perfil: <?=$perfil?></h1>
+
+    <?php
+    if($profesion!=null){
+        echo GridView::widget([
+        'dataProvider' => $carrera,
+        'columns' => [
+            'nombre',
+        ],
+            ]);
+    }?>
+</h2>
 <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [

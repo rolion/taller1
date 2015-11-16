@@ -12,6 +12,9 @@ use app\models\Persona;
 use app\models\DynamicFormModel;
 use app\negocio\InscripcionNegocio;
 use  \yii\helpers\Json;
+use app\models\Llave;
+use app\models\Examen;
+use app\models\ModelInscripcion;
 /**
  * InscripcionExamenController implements the CRUD actions for InscripcionExamen model.
  */
@@ -58,7 +61,16 @@ class InscripcionExamenController extends Controller
             'examenes'=>$examenes
         ]);
     }
-
+    public function actionInscripcionLlave(){
+        $l=new Llave();
+        $model=new ModelInscripcion();
+        $negocio=new InscripcionNegocio();
+        if($model->load(Yii::$app->request->post())
+                && $negocio->inscripcionPorLlave($model)){
+                    $this->redirect(['aplicar-examen/index']);
+        }
+        return $this->render('inscripcion-llave',['model'=>$model]);
+    }
     /**
      * Creates a new InscripcionExamen model.
      * If creation is successful, the browser will be redirected to the 'view' page.

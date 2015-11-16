@@ -33,27 +33,60 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    echo Nav::widget([ 
+    
+    if(!Yii::$app->user->isGuest){
+        if(Yii::$app->user->identity->idPersona->id_tipo==1){
+             echo Nav::widget([ 
+                'options' => ['class' => 'navbar-nav navbar-right'],
+                'items' => [
+                    ['label' => 'Home', 'url' => ['/site/index']],
+                    ['label' => 'Mis Examenes', 'url' => ['/aplicar-examen/index']],
+                    ['label' => 'inscripcion', 'url' => ['/inscripcion-examen/inscripcion-llave']],
+
+                    Yii::$app->user->isGuest ?
+                        ['label' => 'Login', 'url' => ['/site/login']] :
+                        [
+                            'label' => 'Logout (' . Yii::$app->user->identity->usuario . ')',
+                            'url' => ['/site/logout'],
+                            'linkOptions' => ['data-method' => 'post']
+                        ],
+                ],
+            ]);
+        }else{
+            echo Nav::widget([ 
+            'options' => ['class' => 'navbar-nav navbar-right'],
+            'items' => [
+                ['label' => 'Home', 'url' => ['/site/index']],
+                ['label'=>'Llaves','url'=>['/llave/index']],
+                ['label' => 'Categoria Pregunta', 'url' => ['/area/create']],
+                ['label' => 'Baremo', 'url' => ['/baremo/create']],
+                ['label' => 'Colegio', 'url' => ['/colegio/create']],
+                ['label' => 'Examen', 'url' => ['/examen/create']],
+                ['label' => 'Pregunta', 'url' => ['/pregunta/create']],
+
+                Yii::$app->user->isGuest ?
+                    ['label' => 'Login', 'url' => ['/site/login']] :
+                    [
+                        'label' => 'Logout (' . Yii::$app->user->identity->usuario . ')',
+                        'url' => ['/site/logout'],
+                        'linkOptions' => ['data-method' => 'post']
+                    ],
+            ],
+            ]);
+        
+        }
+    }else{
+         echo Nav::widget([ 
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Mis Examenes', 'url' => ['/aplicar-examen/index']],
-            ['label' => 'Categoria Pregunta', 'url' => ['/area/create']],
-            ['label' => 'Baremo', 'url' => ['/baremo/create']],
-            ['label' => 'Colegio', 'url' => ['/colegio/create']],
-            ['label' => 'Examen', 'url' => ['/examen/create']],
-            ['label' => 'Pregunta', 'url' => ['/pregunta/create']],
-            ['label' => 'inscripcion', 'url' => ['/inscripcion-examen/create']],
-            
-            Yii::$app->user->isGuest ?
-                ['label' => 'Login', 'url' => ['/site/login']] :
-                [
-                    'label' => 'Logout (' . Yii::$app->user->identity->usuario . ')',
-                    'url' => ['/site/logout'],
-                    'linkOptions' => ['data-method' => 'post']
-                ],
-        ],
-    ]);
+             ['label' => 'Home', 'url' => ['/site/index']],
+             ['label'=>'Registrarse','url'=>['/persona/create']],
+             ['label' => 'Login', 'url' => ['/site/login']] ,
+  
+            ]
+         ]);
+    }
+    
     NavBar::end();
     ?>
 

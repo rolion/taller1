@@ -33,11 +33,10 @@ use app\models\Colegio;
             'allowClear' => true
         ],
     ])?>
-    
-    <?= $form->field($model, 'id_tipo')->dropDownList(
-        ArrayHelper::map(app\models\TipoPersona::find()->all(), 'id', 'nombre'),
-        ['prompt'=>'Seleccione un Tipo'])
-        ?>
+
+    <?= $form->field($model, 'nick')->textInput()?>
+    <?= $form->field($model, 'pass')->passwordInput()?>
+
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
